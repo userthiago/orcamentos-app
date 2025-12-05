@@ -6,7 +6,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 interface CheckProps {
   type: "checkbox" | "radio";
   isChecked: boolean;
-  label: string;
+  label: string | React.ReactNode;
   onToggle: () => void;
   testID?: string;
 }
@@ -39,7 +39,11 @@ export function Check({
         size={20}
         color={isChecked ? "#6A46EB" : "#A1A2A1"}
       />
-      <Text style={styles.label}>{label}</Text>
+      {typeof label === "string" ? (
+        <Text style={styles.label}>{label}</Text>
+      ) : (
+        label
+      )}
     </TouchableOpacity>
   );
 }
