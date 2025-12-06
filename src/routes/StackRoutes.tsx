@@ -28,7 +28,7 @@ export function StackRoutes() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="home" component={Home} />
       <Stack.Screen name="addBudget" component={AddBudget} />
-      <Stack.Screen name="budgetDetails" component={View} />
+      <Stack.Screen name="budgetDetails" component={BudgetDetails} />
     </Stack.Navigator>
   );
 }
