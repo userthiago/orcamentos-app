@@ -5,6 +5,7 @@ import {
   TouchableOpacityProps,
 } from "react-native";
 import { Icon, IconName } from "./icon";
+import { TitleSm } from "./typography";
 
 type Variant = "primary" | "secondary" | "danger";
 
@@ -66,7 +67,7 @@ export function Button({
     >
       {!!iconName && <Icon name={iconName} size={20} color={iconColor} />}
       {!!text && (
-        <Text
+        <TitleSm
           style={[
             styles.text,
             {
@@ -75,7 +76,7 @@ export function Button({
           ]}
         >
           {text}
-        </Text>
+        </TitleSm>
       )}
     </TouchableOpacity>
   );
@@ -92,8 +93,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   text: {
-    fontSize: 14,
-    fontFamily: "Lato_700Bold",
     paddingVertical: 2,
     paddingHorizontal: 8,
   },

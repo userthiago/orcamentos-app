@@ -7,6 +7,7 @@ import {
   TextInputProps,
   View,
 } from "react-native";
+import { TextMd } from "./typography";
 
 interface InputProps extends TextInputProps {
   isInvalid?: boolean;
@@ -54,16 +55,15 @@ export function Input({ type, isInvalid, flex, ...rest }: InputProps) {
         }
         if (type === "currency") {
           return (
-            <Text
+            <TextMd
               style={[
-                styles.currencyText,
                 {
                   color: iconBorderColors.icon,
                 },
               ]}
             >
               R$
-            </Text>
+            </TextMd>
           );
         }
         return null;
@@ -98,9 +98,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Lato_400Regular",
     color: "#0F0F0F",
-  },
-  currencyText: {
-    fontSize: 16,
-    fontFamily: "Lato_700Bold",
   },
 });

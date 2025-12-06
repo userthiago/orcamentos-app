@@ -2,6 +2,7 @@ import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 import { ScreenContainer } from "@/components/screen-container";
 import { ServiceBudgetCard } from "@/components/service-budget-card";
+import { TextSm, TitleLg } from "@/components/typography";
 import { StackRoutesProps } from "@/routes/StackRoutes";
 import { BudgetItem } from "@/types/budge-item";
 import React from "react";
@@ -82,12 +83,12 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
     <ScreenContainer hiddeBottomEdge>
       <View style={styles.header}>
         <View style={styles.headerContent}>
-          <Text style={styles.screenTitle}>Orçamentos</Text>
+          <TitleLg style={styles.screenTitle}>Orçamentos</TitleLg>
           {draftAmount > 0 && (
-            <Text style={styles.draftTitle}>
+            <TextSm style={styles.draftTitle}>
               Você tem {draftAmount} item{draftAmount > 1 ? "s" : ""} em
               rascunho
-            </Text>
+            </TextSm>
           )}
         </View>
         <Button
@@ -141,16 +142,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   screenTitle: {
-    fontFamily: "Lato_700Bold",
     color: "#6A46EB",
-    fontSize: 18,
-    lineHeight: 25.2,
   },
   draftTitle: {
-    fontFamily: "Lato_400Regular",
     color: "#676767",
-    fontSize: 14,
-    lineHeight: 19.6,
   },
   content: {
     paddingHorizontal: 20,

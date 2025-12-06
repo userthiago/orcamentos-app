@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { Status } from "./status";
 import { CurrencyValue } from "./currency-value";
+import { TextSm, TitleMd } from "./typography";
 
 interface Props extends TouchableOpacityProps {
   status: BudgetStatusTypes;
@@ -26,12 +27,8 @@ export function ServiceBudgetCard({
   return (
     <TouchableOpacity style={styles.card} activeOpacity={0.5} {...rest}>
       <View style={styles.descriptionContainer}>
-        <Text style={styles.description} numberOfLines={2}>
-          {description}
-        </Text>
-        <Text style={styles.customer} numberOfLines={1}>
-          {customer}
-        </Text>
+        <TitleMd numberOfLines={2}>{description}</TitleMd>
+        <TextSm numberOfLines={1}>{customer}</TextSm>
       </View>
       <View style={styles.priceContainer}>
         <Status
@@ -60,31 +57,7 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 8,
   },
-  description: {
-    color: "0F0F0F",
-    fontFamily: "Lato_700Bold",
-    fontSize: 16,
-    lineHeight: 22.4,
-  },
   priceContainer: {
     justifyContent: "space-between",
-  },
-  customer: {
-    color: "#4A4A4A",
-    fontFamily: "Lato_400Regular",
-    fontSize: 14,
-    lineHeight: 19.6,
-  },
-  currency: {
-    color: "0F0F0F",
-    fontFamily: "Lato_400Regular",
-    fontSize: 12,
-    lineHeight: 16.8,
-  },
-  currencyValue: {
-    color: "0F0F0F",
-    fontFamily: "Lato_700Bold",
-    fontSize: 16,
-    lineHeight: 22.4,
   },
 });

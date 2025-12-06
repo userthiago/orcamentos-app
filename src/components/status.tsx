@@ -1,5 +1,6 @@
 import { BudgetStatusTypes } from "@/types/budget-status";
 import { StyleSheet, Text, View, ViewProps } from "react-native";
+import { TitleXs } from "./typography";
 
 interface Props extends ViewProps {
   type: BudgetStatusTypes;
@@ -59,7 +60,7 @@ export function Status({ type, style: componentStyle, ...rest }: Props) {
       {...rest}
     >
       <View style={[styles.ellipse, { backgroundColor: style.iconColor }]} />
-      <Text style={[styles.label, { color: style.labelColor }]}>{label}</Text>
+      <TitleXs style={[{ color: style.labelColor }]}>{label}</TitleXs>
     </View>
   );
 }
@@ -78,10 +79,5 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-  },
-  label: {
-    fontFamily: "Lato_700Bold",
-    fontSize: 12,
-    lineHeight: 16.8,
   },
 });

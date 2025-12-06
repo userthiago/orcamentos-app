@@ -1,20 +1,30 @@
 import { StyleSheet, Text, View, ViewProps } from "react-native";
 import { Icon, IconName } from "./icon";
+import { TextXs } from "./typography";
 
 interface Props extends ViewProps {
   children: React.ReactNode;
   title: string;
   iconName?: IconName;
+  hideContentPadding?: boolean;
 }
 
-export function Section({ title, iconName, children, ...rest }: Props) {
+export function Section({
+  title,
+  iconName,
+  children,
+  hideContentPadding,
+  ...rest
+}: Props) {
   return (
     <View style={styles.container} {...rest}>
       <View style={styles.header}>
         {iconName && <Icon name={iconName} color="#6A46EB" size={16} />}
-        <Text style={styles.title}>{title}</Text>
+        <TextXs style={{ color: "#676767" }}>{title}</TextXs>
       </View>
-      <View style={styles.content}>{children}</View>
+      <View style={hideContentPadding ? undefined : styles.content}>
+        {children}
+      </View>
     </View>
   );
 }
@@ -34,12 +44,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderColor: "#F0F0F0",
-  },
-  title: {
-    color: "#676767",
-    fontSize: 12,
-    lineHeight: 16.8,
-    fontFamily: "Lato_400Regular",
   },
   content: {
     padding: 16,

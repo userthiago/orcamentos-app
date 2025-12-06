@@ -1,11 +1,13 @@
 import { Button } from "@/components/button";
 import { Check } from "@/components/check";
+import { CurrencyValue } from "@/components/currency-value";
 import { Icon } from "@/components/icon";
 import { Input } from "@/components/input";
 import { ScreenContainer } from "@/components/screen-container";
 import { Section } from "@/components/section";
 import { ServiceItem } from "@/components/service-item";
 import { Status } from "@/components/status";
+import { TextXs, TitleSm } from "@/components/typography";
 import { StackRoutesProps } from "@/routes/StackRoutes";
 import { BudgetStatusTypes } from "@/types/budget-status";
 import { chunkArray } from "@/utils/array-utils";
@@ -70,7 +72,7 @@ export default function AddBudget({
           <TouchableOpacity onPress={() => goBack()}>
             <Icon name="chevron-left" size={32} color="#4A4A4A" />
           </TouchableOpacity>
-          <Text style={styles.screenTitle}>Orçamento</Text>
+          <TitleSm>Orçamento</TitleSm>
         </View>
       </View>
       <ScrollView
@@ -84,6 +86,7 @@ export default function AddBudget({
             <Input placeholder="Cliente" />
           </View>
         </Section>
+
         <Section iconName="tag" title="Status">
           <View style={styles.statusContent}>
             {chunkArray(STATUS_OPTIONS, 2).map((statusColumn, columnIndex) => (
@@ -101,6 +104,7 @@ export default function AddBudget({
             ))}
           </View>
         </Section>
+
         <Section iconName="note-with-text" title="Serviços inclusos">
           <View style={styles.includeServicesContainer}>
             {MOCK_SERVICES.map((service) => (
@@ -123,10 +127,28 @@ export default function AddBudget({
             />
           </View>
         </Section>
-        <Section iconName="credit-card" title="Investimento">
-          <View />
+
+        <Section iconName="credit-card" title="Investimento" hideContentPadding>
+          <View style={styles.investimentContent}>
+            <View style={styles.investimentFooter}>
+              <TitleSm>Valor total</TitleSm>
+              <View style={styles.investimentFooterValueContainer}>
+                <TextXs
+                  style={{
+                    color: "#4A4A4A",
+                    textDecorationColor: "#4A4A4A",
+                    textDecorationLine: "line-through",
+                  }}
+                >
+                  R$ 11.500,00
+                </TextXs>
+                <CurrencyValue value={3847.5} strong size="large" />
+              </View>
+            </View>
+          </View>
         </Section>
       </ScrollView>
+
       <View style={styles.footer}>
         <Button text="Cancelar" variant="secondary" onPress={() => goBack()} />
         <Button text="Salvar" iconName="check" onPress={() => {}} />
@@ -150,12 +172,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  screenTitle: {
-    fontFamily: "Lato_700Bold",
-    color: "#0F0F0F",
-    fontSize: 14,
-    lineHeight: 19.6,
-  },
   content: {
     padding: 20,
     gap: 20,
@@ -173,6 +189,23 @@ const styles = StyleSheet.create({
   },
   includeServicesContainer: {
     gap: 20,
+  },
+  investimentContent: {
+    gap: 12,
+  },
+  investimentFooter: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+
+    backgroundColor: "#FAFAFA",
+    paddingVertical: 16,
+    borderTopWidth: 1,
+    borderTopColor: "#F0F0F0",
+    paddingHorizontal: 20,
+  },
+  investimentFooterValueContainer: {
+    alignItems: "flex-end",
   },
   footer: {
     flexDirection: "row",

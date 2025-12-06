@@ -39,7 +39,6 @@ const styles = StyleSheet.create({
     color: "0F0F0F",
     fontFamily: "Lato_400Regular",
     fontSize: 12,
-    lineHeight: 16.8,
   },
   currencyValue: {
     color: "0F0F0F",

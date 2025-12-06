@@ -1,5 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Icon } from "./icon";
+import { TextMd } from "./typography";
 
 interface CheckProps {
   type: "checkbox" | "radio";
@@ -28,7 +29,7 @@ export function Check({
         <RadioIcon isChecked={isChecked} />
       )}
       {typeof label === "string" ? (
-        <Text style={styles.label}>{label}</Text>
+        <TextMd style={{ color: "#4A4A4A" }}>{label}</TextMd>
       ) : (
         label
       )}
@@ -69,10 +70,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-  },
-  label: {
-    color: "#4A4A4A",
-    fontFamily: "Lato_400Regular",
   },
   checkContainer: {
     justifyContent: "center",

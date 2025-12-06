@@ -1,6 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { CurrencyValue } from "./currency-value";
 import { Icon } from "./icon";
+import { TextXs, TitleSm } from "./typography";
 
 interface Props {
   title: string;
@@ -26,19 +27,17 @@ export function ServiceItem({
   return (
     <View style={styles.container} testID={testID}>
       <View style={styles.descriptionContainer}>
-        <Text style={styles.tile} numberOfLines={titleNumberOfLines}>
-          {title}
-        </Text>
-        <Text
-          style={styles.description}
+        <TitleSm numberOfLines={titleNumberOfLines}>{title}</TitleSm>
+        <TextXs
+          style={{ color: "#676767" }}
           numberOfLines={descriptionNumberOfLines}
         >
           {description}
-        </Text>
+        </TextXs>
       </View>
       <View style={styles.valueContainer}>
         <CurrencyValue value={value} strong />
-        <Text style={styles.quantityText}>Qt: {quantity}</Text>
+        <TextXs style={{ color: "#676767" }}>Qt: {quantity}</TextXs>
       </View>
       <TouchableOpacity style={styles.editButton} onPress={onEditPress}>
         <Icon name="edit-pen" size={20} color="#6A46EB" />
@@ -60,24 +59,6 @@ const styles = StyleSheet.create({
   valueContainer: {
     alignItems: "flex-end",
     flexShrink: 0,
-  },
-  tile: {
-    fontFamily: "Lato_700Bold",
-    color: "#0F0F0F",
-    fontSize: 14,
-    lineHeight: 19.6,
-  },
-  description: {
-    fontFamily: "Lato_400Regular",
-    color: "#676767",
-    fontSize: 12,
-    lineHeight: 16.8,
-  },
-  quantityText: {
-    fontFamily: "Lato_400Regular",
-    color: "#676767",
-    fontSize: 10,
-    lineHeight: 14,
   },
   editButton: {
     flexShrink: 0,
