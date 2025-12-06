@@ -3,14 +3,16 @@ import { Check } from "@/components/check";
 import { CurrencyValue } from "@/components/currency-value";
 import { Icon } from "@/components/icon";
 import { Input } from "@/components/input";
+import { InputPercentage } from "@/components/input-percentage";
 import { ScreenContainer } from "@/components/screen-container";
 import { Section } from "@/components/section";
 import { ServiceItem } from "@/components/service-item";
 import { Status } from "@/components/status";
-import { TextXs, TitleSm } from "@/components/typography";
+import { TextSm, TextXs, TitleSm } from "@/components/typography";
 import { StackRoutesProps } from "@/routes/StackRoutes";
 import { BudgetStatusTypes } from "@/types/budget-status";
 import { chunkArray } from "@/utils/array-utils";
+import { formatCurrency } from "@/utils/currency-utils";
 import React, { useState } from "react";
 import {
   ScrollView,
@@ -130,20 +132,36 @@ export default function AddBudget({
 
         <Section iconName="credit-card" title="Investimento" hideContentPadding>
           <View style={styles.investimentContent}>
-            <View style={styles.investimentFooter}>
-              <TitleSm>Valor total</TitleSm>
-              <View style={styles.investimentFooterValueContainer}>
-                <TextXs
-                  style={{
-                    color: "#4A4A4A",
-                    textDecorationColor: "#4A4A4A",
-                    textDecorationLine: "line-through",
-                  }}
-                >
-                  R$ 11.500,00
-                </TextXs>
-                <CurrencyValue value={3847.5} strong size="large" />
+            <View style={styles.investimentContentRow}>
+              <TextSm>Subtotal</TextSm>
+              <View style={[styles.investimentContentRowGroup, { gap: 12 }]}>
+                <TextXs>8 itens</TextXs>
+                <CurrencyValue value={3847.5} size="small" />
               </View>
+            </View>
+            <View style={styles.investimentContentRow}>
+              <View style={[styles.investimentContentRowGroup, { gap: 8 }]}>
+                <TextSm>Desconto</TextSm>
+                <InputPercentage placeholder="0" />
+              </View>
+              <TextSm style={{ color: "#DB4D4D" }}>
+                - {formatCurrency(200)}
+              </TextSm>
+            </View>
+          </View>
+          <View style={styles.investimentFooter}>
+            <TitleSm>Valor total</TitleSm>
+            <View style={styles.investimentFooterValueContainer}>
+              <TextXs
+                style={{
+                  color: "#4A4A4A",
+                  textDecorationColor: "#4A4A4A",
+                  textDecorationLine: "line-through",
+                }}
+              >
+                R$ 11.500,00
+              </TextXs>
+              <CurrencyValue value={3847.5} strong size="large" />
             </View>
           </View>
         </Section>
@@ -192,6 +210,17 @@ const styles = StyleSheet.create({
   },
   investimentContent: {
     gap: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+  },
+  investimentContentRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  investimentContentRowGroup: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   investimentFooter: {
     flexDirection: "row",

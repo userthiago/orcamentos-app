@@ -1,4 +1,3 @@
-import { MaterialIcons } from "@expo/vector-icons";
 import { useMemo, useState } from "react";
 import {
   StyleSheet,
@@ -11,11 +10,9 @@ import { TitleMd } from "./typography";
 
 interface InputProps extends TextInputProps {
   isInvalid?: boolean;
-  type?: "search" | "currency";
-  flex?: boolean;
 }
 
-export function Input({ type, isInvalid, flex, ...rest }: InputProps) {
+export function InputPercentage({ isInvalid, ...rest }: InputProps) {
   const [isFocused, setIsFocused] = useState(false);
 
   const iconBorderColors = useMemo(() => {
@@ -36,47 +33,26 @@ export function Input({ type, isInvalid, flex, ...rest }: InputProps) {
   }, [isInvalid, isFocused]);
 
   return (
-    <View
-      style={[
-        styles.container,
-        { borderColor: iconBorderColors.border },
-        flex && { flex: 1 },
-      ]}
-    >
-      {(() => {
-        if (type === "search") {
-          return (
-            <MaterialIcons
-              name="search"
-              size={20}
-              color={iconBorderColors.icon}
-            />
-          );
-        }
-        if (type === "currency") {
-          return (
-            <TitleMd
-              style={[
-                {
-                  color: iconBorderColors.icon,
-                },
-              ]}
-            >
-              R$
-            </TitleMd>
-          );
-        }
-        return null;
-      })()}
+    <View style={[styles.container, { borderColor: iconBorderColors.border }]}>
       <TextInput
         placeholderTextColor="#676767"
         cursorColor="#6A46EB"
         style={[styles.input]}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        keyboardType={type === "currency" ? "numeric" : "default"}
+        keyboardType="numeric"
+        maxLength={3}
         {...rest}
       />
+      <TitleMd
+        style={[
+          {
+            color: iconBorderColors.icon,
+          },
+        ]}
+      >
+        %
+      </TitleMd>
     </View>
   );
 }
@@ -87,16 +63,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
     backgroundColor: "#FAFAFA",
-    paddingVertical: 12,
+    paddingVertical: 4,
     paddingHorizontal: 16,
     borderWidth: 1,
     borderColor: "#E6E5E5",
     borderRadius: 999,
   },
   input: {
-    flex: 1,
     fontSize: 16,
     fontFamily: "Lato_400Regular",
     color: "#0F0F0F",
+    width: 26,
+    textAlign: "center",
   },
 });
