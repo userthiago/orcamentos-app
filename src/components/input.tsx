@@ -11,9 +11,10 @@ import {
 interface InputProps extends TextInputProps {
   isInvalid?: boolean;
   type?: "search" | "currency";
+  flex?: boolean;
 }
 
-export function Input({ type, isInvalid, ...rest }: InputProps) {
+export function Input({ type, isInvalid, flex, ...rest }: InputProps) {
   const [isFocused, setIsFocused] = useState(false);
 
   const iconBorderColors = useMemo(() => {
@@ -34,7 +35,13 @@ export function Input({ type, isInvalid, ...rest }: InputProps) {
   }, [isInvalid, isFocused]);
 
   return (
-    <View style={[styles.container, { borderColor: iconBorderColors.border }]}>
+    <View
+      style={[
+        styles.container,
+        { borderColor: iconBorderColors.border },
+        flex && { flex: 1 },
+      ]}
+    >
       {(() => {
         if (type === "search") {
           return (
@@ -79,8 +86,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-
-    flex: 1,
     backgroundColor: "#FAFAFA",
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -90,6 +95,9 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
+    fontSize: 16,
+    fontFamily: "Lato_400Regular",
+    color: "#0F0F0F",
   },
   currencyText: {
     fontSize: 16,

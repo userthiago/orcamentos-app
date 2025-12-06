@@ -4,8 +4,6 @@ import { ScreenContainer } from "@/components/screen-container";
 import { ServiceBudgetCard } from "@/components/service-budget-card";
 import { StackRoutesProps } from "@/routes/StackRoutes";
 import { BudgetItem } from "@/types/budge-item";
-import { useNavigation } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 
@@ -82,7 +80,6 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
 
   return (
     <ScreenContainer hiddeBottomEdge>
-      <StatusBar style="auto" />
       <View style={styles.header}>
         <View style={styles.headerContent}>
           <Text style={styles.screenTitle}>Orçamentos</Text>
@@ -101,7 +98,7 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
       </View>
       <View style={styles.content}>
         <View style={styles.searchContainer}>
-          <Input type="search" placeholder="Título ou cliente" />
+          <Input type="search" placeholder="Título ou cliente" flex />
           <Button iconName="filter" variant="secondary" onPress={() => {}} />
         </View>
         <FlatList
@@ -116,8 +113,12 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
               onPress={() => {}}
             />
           )}
+          style={{ flex: 1 }}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 64, gap: 8 }}
+          contentContainerStyle={{
+            paddingBottom: 64,
+            gap: 8,
+          }}
         />
       </View>
     </ScreenContainer>
@@ -161,5 +162,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 8,
     paddingVertical: 24,
+    width: "100%",
   },
 });

@@ -16,7 +16,6 @@ export function ScreenContainer({
         styles.container,
         { paddingTop: top, paddingBottom: hiddeBottomEdge ? 0 : bottom },
       ]}
-      // edges={hiddeBottomEdge ? ["top"] : ["top", "bottom"]}
     >
       {children}
     </View>

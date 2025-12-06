@@ -5,9 +5,9 @@ import {
   TouchableOpacity,
   TouchableOpacityProps,
   View,
-  ViewProps,
 } from "react-native";
 import { Status } from "./status";
+import { CurrencyValue } from "./currency-value";
 
 interface Props extends TouchableOpacityProps {
   status: BudgetStatusTypes;
@@ -23,14 +23,6 @@ export function ServiceBudgetCard({
   price,
   ...rest
 }: Props) {
-  const priceFormated = new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  })
-    .format(price)
-    .replace("R$", "")
-    .trim();
-
   return (
     <TouchableOpacity style={styles.card} activeOpacity={0.5} {...rest}>
       <View style={styles.descriptionContainer}>
@@ -46,9 +38,7 @@ export function ServiceBudgetCard({
           type={status}
           style={{ marginTop: -8, marginRight: -8, alignSelf: "flex-end" }}
         />
-        <Text style={styles.currency}>
-          R$ <Text style={styles.currencyValue}>{priceFormated}</Text>
-        </Text>
+        <CurrencyValue value={price} strong />
       </View>
     </TouchableOpacity>
   );
