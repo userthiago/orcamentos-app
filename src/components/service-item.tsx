@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { CurrencyValue } from "./currency-value";
 import { Icon } from "./icon";
 import { TextXs, TitleSm } from "./typography";

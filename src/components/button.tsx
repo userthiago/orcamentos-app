@@ -1,6 +1,5 @@
 import {
   StyleSheet,
-  Text,
   TouchableOpacity,
   TouchableOpacityProps,
 } from "react-native";

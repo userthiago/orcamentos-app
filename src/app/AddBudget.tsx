@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/button";
 import { Check } from "@/components/check";
 import { CurrencyValue } from "@/components/currency-value";
@@ -13,7 +14,6 @@ import { StackRoutesProps } from "@/routes/StackRoutes";
 import { BudgetStatusTypes } from "@/types/budget-status";
 import { chunkArray } from "@/utils/array-utils";
 import { formatCurrency } from "@/utils/currency-utils";
-import React, { useState } from "react";
 import {
   ScrollView,
   StyleSheet,

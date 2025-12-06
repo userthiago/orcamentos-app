@@ -1,5 +1,5 @@
 import { BudgetStatusTypes } from "@/types/budget-status";
-import { StyleSheet, Text, View, ViewProps } from "react-native";
+import { StyleSheet, View, ViewProps } from "react-native";
 import { TitleXs } from "./typography";
 
 interface Props extends ViewProps {

@@ -5,7 +5,6 @@ import { ServiceBudgetCard } from "@/components/service-budget-card";
 import { TextSm, TitleLg } from "@/components/typography";
 import { StackRoutesProps } from "@/routes/StackRoutes";
 import { BudgetItem } from "@/types/budge-item";
-import React from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 
 const MOCK_BUDGETS: BudgetItem[] = [

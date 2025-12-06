@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ViewProps } from "react-native";
+import { StyleSheet, View, ViewProps } from "react-native";
 import { Icon, IconName } from "./icon";
 import { TextXs } from "./typography";
 

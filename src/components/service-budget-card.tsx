@@ -1,7 +1,6 @@
 import { BudgetStatusTypes } from "@/types/budget-status";
 import {
   StyleSheet,
-  Text,
   TouchableOpacity,
   TouchableOpacityProps,
   View,
