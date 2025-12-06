@@ -1,5 +1,4 @@
 import { BudgetStatusTypes } from "@/types/budget-status";
-import { Lato_700Bold, useFonts } from "@expo-google-fonts/lato";
 import { StyleSheet, Text, View, ViewProps } from "react-native";
 
 interface Props extends ViewProps {
@@ -48,10 +47,6 @@ const statusTypes: Record<
 };
 
 export function Status({ type, style: componentStyle, ...rest }: Props) {
-  useFonts({
-    Lato_700Bold,
-  });
-
   const { label, style } = statusTypes[type];
 
   return (

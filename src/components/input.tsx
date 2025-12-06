@@ -1,4 +1,3 @@
-import { Lato_700Bold, useFonts } from "@expo-google-fonts/lato";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useMemo, useState } from "react";
 import {
@@ -15,10 +14,6 @@ interface InputProps extends TextInputProps {
 }
 
 export function Input({ type, isInvalid, ...rest }: InputProps) {
-  useFonts({
-    Lato_700Bold,
-  });
-
   const [isFocused, setIsFocused] = useState(false);
 
   const iconBorderColors = useMemo(() => {

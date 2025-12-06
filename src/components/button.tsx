@@ -4,8 +4,7 @@ import {
   TouchableOpacity,
   TouchableOpacityProps,
 } from "react-native";
-import { Lato_700Bold, useFonts } from "@expo-google-fonts/lato";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Icon, IconName } from "./icon";
 
 type Variant = "primary" | "secondary" | "danger";
 
@@ -40,7 +39,7 @@ const variantStyles: Record<
 
 interface Props extends TouchableOpacityProps {
   text?: string;
-  iconName?: keyof typeof MaterialIcons.glyphMap;
+  iconName?: IconName;
   variant?: Variant;
 }
 
@@ -50,10 +49,6 @@ export function Button({
   variant = "primary",
   ...rest
 }: Props) {
-  useFonts({
-    Lato_700Bold,
-  });
-
   const { backgroundColor, borderColor, textColor, iconColor } =
     variantStyles[variant];
 
@@ -69,9 +64,7 @@ export function Button({
       activeOpacity={0.5}
       {...rest}
     >
-      {!!iconName && (
-        <MaterialIcons name={iconName} size={20} color={iconColor} />
-      )}
+      {!!iconName && <Icon name={iconName} size={20} color={iconColor} />}
       {!!text && (
         <Text
           style={[

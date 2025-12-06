@@ -95,18 +95,14 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
         </View>
         <Button
           text="Novo"
-          iconName="add"
+          iconName="plus"
           onPress={() => navigation.navigate("addBudget")}
         />
       </View>
       <View style={styles.content}>
         <View style={styles.searchContainer}>
           <Input type="search" placeholder="Título ou cliente" />
-          <Button
-            iconName="filter-list"
-            variant="secondary"
-            onPress={() => {}}
-          />
+          <Button iconName="filter" variant="secondary" onPress={() => {}} />
         </View>
         <FlatList
           data={MOCK_BUDGETS}
