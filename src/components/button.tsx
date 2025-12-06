@@ -9,35 +9,43 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 type Variant = "primary" | "secondary" | "danger";
 
-interface Props extends TouchableOpacityProps {
-  label: string;
-  iconName: keyof typeof MaterialIcons.glyphMap;
-  variant?: Variant;
-}
-
-const variantStyles = {
+const variantStyles: Record<
+  Variant,
+  {
+    backgroundColor: string;
+    borderColor: string;
+    textColor: string;
+    iconColor: string;
+  }
+> = {
   primary: {
     backgroundColor: "#6A46EB",
     borderColor: "#6A46EB",
-    labelColor: "#FFFFFF",
+    textColor: "#FFFFFF",
     iconColor: "#FFFFFF",
   },
   secondary: {
     backgroundColor: "#FAFAFA",
     borderColor: "#E6E5E5",
-    labelColor: "#6A46EB",
+    textColor: "#6A46EB",
     iconColor: "#6A46EB",
   },
   danger: {
     backgroundColor: "#FAFAFA",
     borderColor: "#E6E5E5",
-    labelColor: "#DB4D4D",
+    textColor: "#DB4D4D",
     iconColor: "#DB4D4D",
   },
 };
 
+interface Props extends TouchableOpacityProps {
+  text?: string;
+  iconName?: keyof typeof MaterialIcons.glyphMap;
+  variant?: Variant;
+}
+
 export function Button({
-  label,
+  text,
   iconName,
   variant = "primary",
   ...rest
@@ -46,7 +54,7 @@ export function Button({
     Lato_700Bold,
   });
 
-  const { backgroundColor, borderColor, labelColor, iconColor } =
+  const { backgroundColor, borderColor, textColor, iconColor } =
     variantStyles[variant];
 
   return (
@@ -61,17 +69,21 @@ export function Button({
       activeOpacity={0.5}
       {...rest}
     >
-      <MaterialIcons name={iconName} size={20} color={iconColor} />
-      <Text
-        style={[
-          styles.label,
-          {
-            color: labelColor,
-          },
-        ]}
-      >
-        {label}
-      </Text>
+      {!!iconName && (
+        <MaterialIcons name={iconName} size={20} color={iconColor} />
+      )}
+      {!!text && (
+        <Text
+          style={[
+            styles.text,
+            {
+              color: textColor,
+            },
+          ]}
+        >
+          {text}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 }
@@ -80,14 +92,15 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
 
     padding: 12,
     borderRadius: 999,
     borderWidth: 1,
   },
-  label: {
+  text: {
     fontSize: 14,
     fontFamily: "Lato_700Bold",
+    paddingVertical: 2,
+    paddingHorizontal: 8,
   },
 });

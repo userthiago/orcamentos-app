@@ -1,14 +1,13 @@
+import { BudgetStatusTypes } from "@/types/budget-status";
 import { Lato_700Bold, useFonts } from "@expo-google-fonts/lato";
 import { StyleSheet, Text, View, ViewProps } from "react-native";
 
-type Types = "sent" | "draft" | "approved" | "declined";
-
 interface Props extends ViewProps {
-  type: Types;
+  type: BudgetStatusTypes;
 }
 
 const statusTypes: Record<
-  Types,
+  BudgetStatusTypes,
   {
     label: string;
     style: { backgroundColor: string; labelColor: string; iconColor: string };
@@ -48,7 +47,7 @@ const statusTypes: Record<
   },
 };
 
-export function Status({ type, ...rest }: Props) {
+export function Status({ type, style: componentStyle, ...rest }: Props) {
   useFonts({
     Lato_700Bold,
   });
@@ -57,7 +56,11 @@ export function Status({ type, ...rest }: Props) {
 
   return (
     <View
-      style={[styles.container, { backgroundColor: style.backgroundColor }]}
+      style={[
+        styles.container,
+        { backgroundColor: style.backgroundColor },
+        componentStyle,
+      ]}
       {...rest}
     >
       <View style={[styles.ellipse, { backgroundColor: style.iconColor }]} />
@@ -84,5 +87,6 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: "Lato_700Bold",
     fontSize: 12,
+    lineHeight: 16.8,
   },
 });

@@ -72,6 +72,7 @@ export function Input({ type, isInvalid, ...rest }: InputProps) {
         style={[styles.input]}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
+        keyboardType={type === "currency" ? "numeric" : "default"}
         {...rest}
       />
     </View>
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
 
-    width: "100%",
+    flex: 1,
     backgroundColor: "#FAFAFA",
     paddingVertical: 12,
     paddingHorizontal: 16,

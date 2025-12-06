@@ -1,22 +1,11 @@
-import { Routes } from "@/routes";
 import React from "react";
-import {
-  Lato_100Thin,
-  Lato_300Light,
-  Lato_400Regular,
-  Lato_700Bold,
-  Lato_900Black,
-  useFonts,
-} from "@expo-google-fonts/lato";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Routes } from "@/routes";
 
 export default function App() {
-  const [fontsLoaded] = useFonts({
-    Lato_100Thin,
-    Lato_300Light,
-    Lato_400Regular,
-    Lato_700Bold,
-    Lato_900Black,
-  });
-
-  return <Routes />;
+  return (
+    <SafeAreaProvider>
+      <Routes />
+    </SafeAreaProvider>
+  );
 }
