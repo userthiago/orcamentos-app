@@ -72,7 +72,7 @@ export default function AddBudget({
       <View style={styles.header}>
         <View style={styles.headerContent}>
           <TouchableOpacity onPress={() => goBack()}>
-            <Icon name="chevron-left" size={32} color="#4A4A4A" />
+            <Icon name="chevron-left" size={24} color="#4A4A4A" />
           </TouchableOpacity>
           <TitleSm>Orçamento</TitleSm>
         </View>

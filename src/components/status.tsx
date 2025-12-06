@@ -1,68 +1,23 @@
 import { BudgetStatusTypes } from "@/types/budget-status";
 import { StyleSheet, View, ViewProps } from "react-native";
 import { TitleXs } from "./typography";
+import { Tag } from "./tag";
 
 interface Props extends ViewProps {
   type: BudgetStatusTypes;
 }
 
-const statusTypes: Record<
-  BudgetStatusTypes,
-  {
-    label: string;
-    style: { backgroundColor: string; labelColor: string; iconColor: string };
-  }
-> = {
-  sent: {
-    label: "Enviado",
-    style: {
-      backgroundColor: "#CEEFFF",
-      labelColor: "#1D7096",
-      iconColor: "#2AA1D9",
-    },
-  },
-  draft: {
-    label: "Rascunho",
-    style: {
-      backgroundColor: "#E6E5E5",
-      labelColor: "#676767",
-      iconColor: "#A1A2A1",
-    },
-  },
-  approved: {
-    label: "Aprovado",
-    style: {
-      backgroundColor: "#BFF7BE",
-      labelColor: "#30752F",
-      iconColor: "#4BB84A",
-    },
-  },
-  declined: {
-    label: "Recusado",
-    style: {
-      backgroundColor: "#FFD6D6",
-      labelColor: "#9E4949",
-      iconColor: "#DB4D4D",
-    },
-  },
+const statusLabel: Record<BudgetStatusTypes, string> = {
+  sent: "Enviado",
+  draft: "Rascunho",
+  approved: "Aprovado",
+  declined: "Recusado",
 };
 
-export function Status({ type, style: componentStyle, ...rest }: Props) {
-  const { label, style } = statusTypes[type];
+export function Status({ type, ...rest }: Props) {
+  const label = statusLabel[type];
 
-  return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: style.backgroundColor },
-        componentStyle,
-      ]}
-      {...rest}
-    >
-      <View style={[styles.ellipse, { backgroundColor: style.iconColor }]} />
-      <TitleXs style={[{ color: style.labelColor }]}>{label}</TitleXs>
-    </View>
-  );
+  return <Tag variant={type} text={label} showBullet {...rest} />;
 }
 
 const styles = StyleSheet.create({

@@ -9,7 +9,13 @@ import { ScreenContainer } from "@/components/screen-container";
 import { Section } from "@/components/section";
 import { ServiceItem } from "@/components/service-item";
 import { Status } from "@/components/status";
-import { TextSm, TextXs, TitleSm } from "@/components/typography";
+import {
+  TextSm,
+  TextXs,
+  TitleLg,
+  TitleSm,
+  TitleXs,
+} from "@/components/typography";
 import { StackRoutesProps } from "@/routes/StackRoutes";
 import { BudgetStatusTypes } from "@/types/budget-status";
 import { chunkArray } from "@/utils/array-utils";
@@ -21,6 +27,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { IconTag } from "@/components/icon-tag";
+import { Tag } from "@/components/tag";
 
 const MOCK_SERVICES = [
   {
@@ -63,7 +71,8 @@ const STATUS_OPTIONS: BudgetStatusTypes[] = [
 export default function BudgetDetails({
   navigation,
 }: StackRoutesProps<"budgetDetails">) {
-  const { goBack } = navigation;
+  const { navigate, goBack } = navigation;
+  const id = "12345";
   const [selectedStatus, setSelectedStatus] =
     useState<BudgetStatusTypes>("draft");
 
@@ -72,40 +81,53 @@ export default function BudgetDetails({
       <View style={styles.header}>
         <View style={styles.headerContent}>
           <TouchableOpacity onPress={() => goBack()}>
-            <Icon name="chevron-left" size={32} color="#4A4A4A" />
+            <Icon name="chevron-left" size={24} color="#4A4A4A" />
           </TouchableOpacity>
-          <TitleSm>Orçamento</TitleSm>
+          <TitleSm>Orçamento #{id}</TitleSm>
         </View>
+        <Status type="sent" />
       </View>
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <Section iconName="shop" title="Informações gerais">
-          <View style={styles.generalInformationContent}>
-            <Input placeholder="Título" />
-            <Input placeholder="Cliente" />
+        <View style={styles.sectionContainer}>
+          <View style={[styles.customerTitleContainer, styles.sectionPadding]}>
+            <IconTag name="shop" />
+            <TitleLg style={{ flex: 1 }}>
+              Desenvolvimento de aplicativo de loja online
+            </TitleLg>
           </View>
-        </Section>
-
-        <Section iconName="tag" title="Status">
-          <View style={styles.statusContent}>
-            {chunkArray(STATUS_OPTIONS, 2).map((statusColumn, columnIndex) => (
-              <View key={columnIndex} style={styles.statusColumn}>
-                {statusColumn.map((status) => (
-                  <Check
-                    key={status}
-                    type="radio"
-                    isChecked={selectedStatus === status}
-                    label={<Status type={status} />}
-                    onToggle={() => setSelectedStatus(status)}
-                  />
-                ))}
+          <View
+            style={[styles.customerDescriptionContainer, styles.sectionPadding]}
+          >
+            <View style={styles.customerDescriptionItem}>
+              <TextXs style={styles.customerDescriptionTitle}>Cliente</TextXs>
+              <TextSm style={styles.customerDescriptionValue}>
+                Soluções Tecnológicas Beta
+              </TextSm>
+            </View>
+            <View style={styles.customerDescriptionRow}>
+              <View style={styles.customerDescriptionItem}>
+                <TextXs style={styles.customerDescriptionTitle}>
+                  Criado em
+                </TextXs>
+                <TextSm style={styles.customerDescriptionValue}>
+                  22/08/2024
+                </TextSm>
               </View>
-            ))}
+              <View style={styles.customerDescriptionItem}>
+                <TextXs style={styles.customerDescriptionTitle}>
+                  Atualizado em
+                </TextXs>
+                <TextSm style={styles.customerDescriptionValue}>
+                  25/08/2024
+                </TextSm>
+              </View>
+            </View>
           </View>
-        </Section>
+        </View>
 
         <Section iconName="note-with-text" title="Serviços inclusos">
           <View style={styles.includeServicesContainer}>
@@ -118,58 +140,69 @@ export default function BudgetDetails({
                 quantity={service.quantity}
                 titleNumberOfLines={1}
                 descriptionNumberOfLines={1}
-                onEditPress={() => {}}
               />
             ))}
-            <Button
-              iconName="plus"
-              text="Adicionar serviço"
-              variant="secondary"
-              onPress={() => {}}
-            />
           </View>
         </Section>
 
-        <Section iconName="credit-card" title="Investimento" hideContentPadding>
-          <View style={styles.investimentContent}>
-            <View style={styles.investimentContentRow}>
-              <TextSm>Subtotal</TextSm>
-              <View style={[styles.investimentContentRowGroup, { gap: 12 }]}>
-                <TextXs>8 itens</TextXs>
-                <CurrencyValue value={3847.5} size="small" />
-              </View>
+        <View
+          style={[
+            styles.sectionContainer,
+            styles.sectionContainerRow,
+            styles.sectionPadding,
+          ]}
+        >
+          <IconTag name="shop" />
+          <View style={{ flex: 1 }}>
+            <View style={styles.budgetTotalRow}>
+              <TextSm style={styles.budgetTotalLabel}>Subtotal</TextSm>
+              <TitleXs style={styles.budgetTotalLabel}>
+                {formatCurrency(4050)}
+              </TitleXs>
             </View>
-            <View style={styles.investimentContentRow}>
-              <View style={[styles.investimentContentRowGroup, { gap: 8 }]}>
-                <TextSm>Desconto</TextSm>
-                <InputPercentage placeholder="0" />
+            <View style={styles.budgetTotalRow}>
+              <View style={styles.budgetTotalRowGroup}>
+                <TextSm style={styles.budgetTotalLabel}>Desconto</TextSm>
+                <Tag text="5% off" variant="approved" />
               </View>
-              <TextSm style={{ color: "#DB4D4D" }}>
+              <TitleXs style={[styles.budgetTotalLabel, { color: "#30752F" }]}>
                 - {formatCurrency(200)}
-              </TextSm>
+              </TitleXs>
+            </View>
+            <View style={styles.divisor} />
+            <View style={styles.budgetTotalRow}>
+              <TitleSm style={styles.budgetTotalLabel}>
+                Investimento total
+              </TitleSm>
+              <CurrencyValue value={3850} strong size="large" />
             </View>
           </View>
-          <View style={styles.investimentFooter}>
-            <TitleSm>Valor total</TitleSm>
-            <View style={styles.investimentFooterValueContainer}>
-              <TextXs
-                style={{
-                  color: "#4A4A4A",
-                  textDecorationColor: "#4A4A4A",
-                  textDecorationLine: "line-through",
-                }}
-              >
-                R$ 11.500,00
-              </TextXs>
-              <CurrencyValue value={3847.5} strong size="large" />
-            </View>
-          </View>
-        </Section>
+        </View>
       </ScrollView>
 
       <View style={styles.footer}>
-        <Button text="Cancelar" variant="secondary" onPress={() => goBack()} />
-        <Button text="Salvar" iconName="check" onPress={() => {}} />
+        <View style={styles.footerActionsGroup}>
+          <Button
+            variant="danger"
+            iconName="trash-2"
+            onPress={() => goBack()}
+          />
+          <Button
+            variant="secondary"
+            iconName="copy"
+            onPress={() => goBack()}
+          />
+          <Button
+            variant="secondary"
+            iconName="edit-pen"
+            onPress={() => navigate("addBudget", { budgetId: id })}
+          />
+        </View>
+        <Button
+          text="Compartilhar"
+          iconName="direction-up-right"
+          onPress={() => {}}
+        />
       </View>
     </ScreenContainer>
   );
@@ -194,56 +227,82 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 20,
   },
-  generalInformationContent: {
-    gap: 12,
+  sectionContainer: {
+    backgroundColor: "#FAFAFA",
+    borderColor: "#F0F0F0",
+    borderWidth: 1,
+    borderRadius: 16,
   },
-  statusContent: {
+  sectionContainerRow: {
+    flexDirection: "row",
+    gap: 16,
+  },
+  sectionPadding: {
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+  },
+  customerTitleContainer: {
     flexDirection: "row",
     gap: 12,
+
+    borderBottomColor: "#F0F0F0",
+    borderBottomWidth: 1,
   },
-  statusColumn: {
+  customerDescriptionContainer: {
     gap: 12,
+  },
+  customerDescriptionRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  customerDescriptionTitle: {
+    color: "#676767",
+  },
+  customerDescriptionValue: {
+    color: "#0F0F0F",
+  },
+  customerDescriptionItem: {
+    gap: 4,
     flex: 1,
   },
   includeServicesContainer: {
     gap: 20,
   },
-  investimentContent: {
-    gap: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
+  budgetTotalGroup: {
+    gap: 2,
   },
-  investimentContentRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  investimentContentRowGroup: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  investimentFooter: {
+  budgetTotalRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-
-    backgroundColor: "#FAFAFA",
-    paddingVertical: 16,
-    borderTopWidth: 1,
-    borderTopColor: "#F0F0F0",
-    paddingHorizontal: 20,
   },
-  investimentFooterValueContainer: {
-    alignItems: "flex-end",
+  budgetTotalRowGroup: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  budgetTotalLabel: {
+    color: "#4A4A4A",
   },
   footer: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
     gap: 12,
 
     padding: 20,
     borderTopWidth: 1,
     borderTopColor: "#F0F0F0",
+  },
+  divisor: {
+    height: 1,
+    backgroundColor: "#F0F0F0",
+    marginVertical: 8,
+  },
+  footerActionsGroup: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
 });

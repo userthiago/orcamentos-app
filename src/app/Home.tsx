@@ -110,7 +110,9 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
               description={item.description}
               customer={item.customer}
               price={item.price}
-              onPress={() => {}}
+              onPress={() =>
+                navigation.navigate("budgetDetails", { budgetId: item.id })
+              }
             />
           )}
           style={{ flex: 1 }}

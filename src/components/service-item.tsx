@@ -10,7 +10,7 @@ interface Props {
   quantity: number;
   titleNumberOfLines?: number;
   descriptionNumberOfLines?: number;
-  onEditPress: () => void;
+  onEditPress?: () => void;
   testID?: string;
 }
 
@@ -39,9 +39,11 @@ export function ServiceItem({
         <CurrencyValue value={value} strong />
         <TextXs style={{ color: "#676767" }}>Qt: {quantity}</TextXs>
       </View>
-      <TouchableOpacity style={styles.editButton} onPress={onEditPress}>
-        <Icon name="edit-pen" size={20} color="#6A46EB" />
-      </TouchableOpacity>
+      {onEditPress && (
+        <TouchableOpacity style={styles.editButton} onPress={onEditPress}>
+          <Icon name="edit-pen" size={20} color="#6A46EB" />
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

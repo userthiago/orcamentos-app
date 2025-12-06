@@ -11,7 +11,7 @@ export type StackRoutesList = {
   addBudget:
     | undefined
     | {
-        serviceId: string;
+        budgetId: string;
       };
   budgetDetails: {
     budgetId: string;
