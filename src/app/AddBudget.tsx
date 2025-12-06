@@ -1,6 +1,8 @@
+import { Check } from "@/components/check";
+import { Icon } from "@/components/icon";
 import { ScreenContainer } from "@/components/screen-container";
+import { Section } from "@/components/section";
 import { StackRoutesProps } from "@/routes/StackRoutes";
-import { MaterialIcons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -15,12 +17,19 @@ export default function AddBudget({
       <View style={styles.header}>
         <View style={styles.headerContent}>
           <TouchableOpacity onPress={() => goBack()}>
-            <MaterialIcons name="chevron-left" size={32} color="#4A4A4A" />
+            <Icon name="chevron-left" size={32} color="#4A4A4A" />
           </TouchableOpacity>
           <Text style={styles.screenTitle}>Orçamento</Text>
         </View>
       </View>
-      <View style={styles.content}></View>
+      <View style={styles.content}>
+        <Section iconName="shop" title="Informações gerais">
+          <View></View>
+        </Section>
+        <Section iconName="tag" title="Status">
+          <View />
+        </Section>
+      </View>
     </ScreenContainer>
   );
 }
@@ -47,7 +56,8 @@ const styles = StyleSheet.create({
     lineHeight: 19.6,
   },
   content: {
-    paddingHorizontal: 20,
+    padding: 20,
+    gap: 20,
     flex: 1,
   },
 });
