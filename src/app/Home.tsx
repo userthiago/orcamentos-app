@@ -2,7 +2,9 @@ import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 import { ScreenContainer } from "@/components/screen-container";
 import { ServiceBudgetCard } from "@/components/service-budget-card";
+import { StackRoutesProps } from "@/routes/StackRoutes";
 import { BudgetItem } from "@/types/budge-item";
+import { useNavigation } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
@@ -73,7 +75,7 @@ const MOCK_BUDGETS: BudgetItem[] = [
   },
 ];
 
-export default function Home() {
+export default function Home({ navigation }: StackRoutesProps<"home">) {
   const draftAmount = MOCK_BUDGETS.filter(
     (budget) => budget.status === "draft"
   ).length;
@@ -91,7 +93,11 @@ export default function Home() {
             </Text>
           )}
         </View>
-        <Button text="Novo" iconName="add" onPress={() => {}} />
+        <Button
+          text="Novo"
+          iconName="add"
+          onPress={() => navigation.navigate("addBudget")}
+        />
       </View>
       <View style={styles.content}>
         <View style={styles.searchContainer}>
@@ -123,7 +129,6 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-  container: {},
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -142,11 +147,13 @@ const styles = StyleSheet.create({
     fontFamily: "Lato_700Bold",
     color: "#6A46EB",
     fontSize: 18,
+    lineHeight: 25.2,
   },
   draftTitle: {
     fontFamily: "Lato_400Regular",
     color: "#676767",
     fontSize: 14,
+    lineHeight: 19.6,
   },
   content: {
     paddingHorizontal: 20,

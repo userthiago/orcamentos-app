@@ -1,3 +1,4 @@
+import AddBudget from "@/app/AddBudget";
 import Home from "@/app/Home";
 import {
   createNativeStackNavigator,
@@ -7,7 +8,7 @@ import { View } from "react-native";
 
 export type StackRoutesList = {
   home: undefined;
-  budgetManagement:
+  addBudget:
     | undefined
     | {
         serviceId: string;
@@ -26,7 +27,7 @@ export function StackRoutes() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="home" component={Home} />
-      <Stack.Screen name="budgetManagement" component={View} />
+      <Stack.Screen name="addBudget" component={AddBudget} />
       <Stack.Screen name="budgetDetails" component={View} />
     </Stack.Navigator>
   );
