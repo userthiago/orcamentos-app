@@ -6,11 +6,11 @@ import { ServiceBudgetCard } from "@/components/service-budget-card";
 import { TextSm, TitleLg } from "@/components/typography";
 import { BUDGET_SORT_DEFAULT_OPTION } from "@/config/budget-config";
 import { StackRoutesProps } from "@/routes/StackRoutes";
-import { BudgetItem } from "@/types/budge-item";
+import { BudgetSummaryItem } from "@/types/budge-summary-item";
 import { useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 
-const MOCK_BUDGETS: BudgetItem[] = [
+const MOCK_BUDGETS: BudgetSummaryItem[] = [
   {
     id: "1",
     description: "Desenvolvimento de aplicativo de loja online",

@@ -1,6 +1,6 @@
 import { BudgetStatusTypes } from "./budget-status";
 
-export type BudgetItem = {
+export type BudgetSummaryItem = {
   id: string;
   description: string;
   customer: string;

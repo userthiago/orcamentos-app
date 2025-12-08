@@ -64,7 +64,7 @@ export function Button({
       activeOpacity={0.5}
       {...rest}
     >
-      {!!iconName && <Icon name={iconName} size={20} color={iconColor} />}
+      {!!iconName && <Icon name={iconName} size={24} color={iconColor} />}
       {!!text && (
         <TitleSm
           style={[

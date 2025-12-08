@@ -1,21 +1,15 @@
-import { MaterialIcons } from "@expo/vector-icons";
 import { useMemo, useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TextInputProps,
-  View,
-} from "react-native";
+import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
 import { TitleMd } from "./typography";
+import { Icon } from "./icon";
 
-interface InputProps extends TextInputProps {
+interface Props extends TextInputProps {
   isInvalid?: boolean;
-  type?: "search" | "currency";
+  type?: "search" | "currency" | "textfield";
   flex?: boolean;
 }
 
-export function Input({ type, isInvalid, flex, ...rest }: InputProps) {
+export function Input({ type, isInvalid, flex, ...rest }: Props) {
   const [isFocused, setIsFocused] = useState(false);
 
   const iconBorderColors = useMemo(() => {
@@ -40,18 +34,13 @@ export function Input({ type, isInvalid, flex, ...rest }: InputProps) {
       style={[
         styles.container,
         { borderColor: iconBorderColors.border },
+        type === "textfield" && styles.textfieldContainer,
         flex && { flex: 1 },
       ]}
     >
       {(() => {
         if (type === "search") {
-          return (
-            <MaterialIcons
-              name="search"
-              size={20}
-              color={iconBorderColors.icon}
-            />
-          );
+          return <Icon name="search" size={20} color={iconBorderColors.icon} />;
         }
         if (type === "currency") {
           return (
@@ -68,13 +57,15 @@ export function Input({ type, isInvalid, flex, ...rest }: InputProps) {
         }
         return null;
       })()}
+
       <TextInput
         placeholderTextColor="#676767"
         cursorColor="#6A46EB"
-        style={[styles.input]}
+        style={[styles.input, type === "textfield" && styles.textfield]}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        keyboardType={type === "currency" ? "numeric" : "default"}
+        keyboardType={type === "currency" ? "decimal-pad" : "default"}
+        multiline={type === "textfield"}
         {...rest}
       />
     </View>
@@ -93,10 +84,17 @@ const styles = StyleSheet.create({
     borderColor: "#E6E5E5",
     borderRadius: 999,
   },
+  textfieldContainer: {
+    height: 120,
+    borderRadius: 20,
+  },
   input: {
     flex: 1,
     fontSize: 16,
     fontFamily: "Lato_400Regular",
     color: "#0F0F0F",
+  },
+  textfield: {
+    height: 96,
   },
 });
