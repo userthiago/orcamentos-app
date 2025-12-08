@@ -1,10 +1,13 @@
 import { Button } from "@/components/button";
+import { FilterModal } from "@/components/filter-modal";
 import { Input } from "@/components/input";
 import { ScreenContainer } from "@/components/screen-container";
 import { ServiceBudgetCard } from "@/components/service-budget-card";
 import { TextSm, TitleLg } from "@/components/typography";
+import { BUDGET_SORT_DEFAULT_OPTION } from "@/config/budget-config";
 import { StackRoutesProps } from "@/routes/StackRoutes";
 import { BudgetItem } from "@/types/budge-item";
+import { useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 
 const MOCK_BUDGETS: BudgetItem[] = [
@@ -74,56 +77,83 @@ const MOCK_BUDGETS: BudgetItem[] = [
 ];
 
 export default function Home({ navigation }: StackRoutesProps<"home">) {
+  const [isFilterModalVisible, setIsFilterModalVisible] =
+    useState<boolean>(false);
+  const [selectedStatuses, setSelectedStatuses] = useState<
+    string[] | undefined
+  >(undefined);
+  const [selectedSortOption, setSelectedSortOption] = useState<string>(
+    BUDGET_SORT_DEFAULT_OPTION.value
+  );
+
   const draftAmount = MOCK_BUDGETS.filter(
     (budget) => budget.status === "draft"
   ).length;
 
+  const toggleFilterModal = () => {
+    setIsFilterModalVisible((prev) => !prev);
+  };
+
   return (
-    <ScreenContainer hiddeBottomEdge>
-      <View style={styles.header}>
-        <View style={styles.headerContent}>
-          <TitleLg style={styles.screenTitle}>Orçamentos</TitleLg>
-          {draftAmount > 0 && (
-            <TextSm style={styles.draftTitle}>
-              Você tem {draftAmount} item{draftAmount > 1 ? "s" : ""} em
-              rascunho
-            </TextSm>
-          )}
+    <>
+      <ScreenContainer hiddeBottomEdge>
+        <View style={styles.header}>
+          <View style={styles.headerContent}>
+            <TitleLg style={styles.screenTitle}>Orçamentos</TitleLg>
+            {draftAmount > 0 && (
+              <TextSm style={styles.draftTitle}>
+                Você tem {draftAmount} item{draftAmount > 1 ? "s" : ""} em
+                rascunho
+              </TextSm>
+            )}
+          </View>
+          <Button
+            text="Novo"
+            iconName="plus"
+            onPress={() => navigation.navigate("addBudget")}
+          />
         </View>
-        <Button
-          text="Novo"
-          iconName="plus"
-          onPress={() => navigation.navigate("addBudget")}
-        />
-      </View>
-      <View style={styles.content}>
-        <View style={styles.searchContainer}>
-          <Input type="search" placeholder="Título ou cliente" flex />
-          <Button iconName="filter" variant="secondary" onPress={() => {}} />
-        </View>
-        <FlatList
-          data={MOCK_BUDGETS}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <ServiceBudgetCard
-              status={item.status}
-              description={item.description}
-              customer={item.customer}
-              price={item.price}
-              onPress={() =>
-                navigation.navigate("budgetDetails", { budgetId: item.id })
-              }
+        <View style={styles.content}>
+          <View style={styles.searchContainer}>
+            <Input type="search" placeholder="Título ou cliente" flex />
+            <Button
+              iconName="filter"
+              variant="secondary"
+              onPress={toggleFilterModal}
             />
-          )}
-          style={{ flex: 1 }}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingBottom: 64,
-            gap: 8,
-          }}
-        />
-      </View>
-    </ScreenContainer>
+          </View>
+          <FlatList
+            data={MOCK_BUDGETS}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <ServiceBudgetCard
+                status={item.status}
+                description={item.description}
+                customer={item.customer}
+                price={item.price}
+                onPress={() =>
+                  navigation.navigate("budgetDetails", { budgetId: item.id })
+                }
+              />
+            )}
+            style={{ flex: 1 }}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingBottom: 64,
+              gap: 8,
+            }}
+          />
+        </View>
+      </ScreenContainer>
+      <FilterModal
+        isVisible={isFilterModalVisible}
+        selectedStatuses={selectedStatuses}
+        selectedSortOption={selectedSortOption}
+        onSelectStatuses={setSelectedStatuses}
+        onSelectSortOption={setSelectedSortOption}
+        onToggleVisibility={toggleFilterModal}
+      />
+    </>
   );
 }
 

@@ -2,20 +2,14 @@ import { BudgetStatusTypes } from "@/types/budget-status";
 import { StyleSheet, View, ViewProps } from "react-native";
 import { TitleXs } from "./typography";
 import { Tag } from "./tag";
+import { BUDGET_STATUS_OPTIONS } from "@/config/budget-config";
 
 interface Props extends ViewProps {
   type: BudgetStatusTypes;
 }
 
-const statusLabel: Record<BudgetStatusTypes, string> = {
-  sent: "Enviado",
-  draft: "Rascunho",
-  approved: "Aprovado",
-  declined: "Recusado",
-};
-
 export function Status({ type, ...rest }: Props) {
-  const label = statusLabel[type];
+  const { label } = BUDGET_STATUS_OPTIONS[type];
 
   return <Tag variant={type} text={label} showBullet {...rest} />;
 }
