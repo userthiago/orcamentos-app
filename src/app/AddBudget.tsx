@@ -330,7 +330,6 @@ export default function AddBudget({
             </View>
           </Section>
         </ScrollView>
-
         <View style={styles.footer}>
           <Button
             text="Cancelar"

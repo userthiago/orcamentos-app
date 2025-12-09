@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -8,6 +8,8 @@ import {
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import * as Crypto from "expo-crypto";
+import * as Sharing from "expo-sharing";
+import { captureRef } from "react-native-view-shot";
 
 import { StackRoutesProps } from "@/routes/StackRoutes";
 import { formatCurrency } from "@/utils/currency-utils";
@@ -39,6 +41,8 @@ export default function BudgetDetails({
   const { navigate, goBack } = navigation;
   const { budgetId } = route.params;
   const [budgetData, setBudgetData] = useState<BudgetType | null>(null);
+  const [isSharing, setIsSharing] = useState(false);
+  const viewRef = useRef<View>(null);
 
   const loadBudgetData = async (id: string) => {
     try {
@@ -113,6 +117,48 @@ export default function BudgetDetails({
     );
   };
 
+  const handleShareScreenshot = async () => {
+    try {
+      setIsSharing(true);
+
+      // Verifica se o compartilhamento está disponível
+      const canShare = await Sharing.isAvailableAsync();
+      if (!canShare) {
+        Alert.alert(
+          "Compartilhamento indisponível",
+          "O compartilhamento não está disponível neste dispositivo."
+        );
+        return;
+      }
+
+      // Captura a tela como imagem
+      if (!viewRef.current) {
+        throw new Error("Referência da view não encontrada");
+      }
+
+      const uri = await captureRef(viewRef, {
+        format: "png",
+        quality: 0.9,
+      });
+
+      // Compartilha a imagem
+      await Sharing.shareAsync(uri, {
+        mimeType: "image/png",
+        dialogTitle: `Orçamento #${budgetData?.budgetNumber}`,
+      });
+    } catch (error) {
+      console.error("Erro ao compartilhar:", error);
+      Alert.alert(
+        "Erro ao compartilhar",
+        error instanceof Error
+          ? error.message
+          : "Não foi possível compartilhar o orçamento"
+      );
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
       loadBudgetData(budgetId);
@@ -134,114 +180,121 @@ export default function BudgetDetails({
         </View>
         <Status type="sent" />
       </View>
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.sectionContainer}>
-          <View style={[styles.customerTitleContainer, styles.sectionPadding]}>
-            <IconTag name="shop" />
-            <TitleLg style={{ flex: 1 }}>{budgetData.title}</TitleLg>
-          </View>
-          <View
-            style={[styles.customerDescriptionContainer, styles.sectionPadding]}
-          >
-            <View style={styles.customerDescriptionItem}>
-              <TextXs style={styles.customerDescriptionTitle}>Cliente</TextXs>
-              <TextSm style={styles.customerDescriptionValue}>
-                {budgetData.customer}
-              </TextSm>
-            </View>
-            <View style={styles.customerDescriptionRow}>
-              <View style={styles.customerDescriptionItem}>
-                <TextXs style={styles.customerDescriptionTitle}>
-                  Criado em
-                </TextXs>
-                <TextSm style={styles.customerDescriptionValue}>
-                  {new Date(budgetData.createdAt).toLocaleDateString()}
-                </TextSm>
-              </View>
-              <View style={styles.customerDescriptionItem}>
-                <TextXs style={styles.customerDescriptionTitle}>
-                  Atualizado em
-                </TextXs>
-                <TextSm style={styles.customerDescriptionValue}>
-                  {new Date(budgetData.updatedAt).toLocaleDateString()}
-                </TextSm>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        <Section iconName="note-with-text" title="Serviços inclusos">
-          <View style={styles.includeServicesContainer}>
-            {budgetData.services.map((service) => (
-              <ServiceItem
-                key={service.id}
-                title={service.title}
-                description={service.description}
-                price={service.price}
-                quantity={service.quantity}
-                titleNumberOfLines={1}
-                descriptionNumberOfLines={1}
-              />
-            ))}
-          </View>
-        </Section>
-
-        <View
-          style={[
-            styles.sectionContainer,
-            styles.sectionContainerRow,
-            styles.sectionPadding,
-          ]}
+      <View ref={viewRef} style={{ flex: 1 }} collapsable={false}>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
         >
-          <IconTag name="shop" />
-          <View style={{ flex: 1 }}>
-            <View style={styles.budgetTotalRow}>
-              <TextSm style={styles.budgetTotalLabel}>Subtotal</TextSm>
-              <TitleXs style={styles.budgetTotalLabel}>
-                {formatCurrency(budgetData.priceSubtotal)}
-              </TitleXs>
+          <View style={styles.sectionContainer}>
+            <View
+              style={[styles.customerTitleContainer, styles.sectionPadding]}
+            >
+              <IconTag name="shop" />
+              <TitleLg style={{ flex: 1 }}>{budgetData.title}</TitleLg>
             </View>
-            <View style={styles.budgetTotalRow}>
-              <View style={styles.budgetTotalRowGroup}>
-                <TextSm style={styles.budgetTotalLabel}>Desconto</TextSm>
-                <Tag
-                  text={`${budgetData.discountPercentage}% off`}
-                  variant={
-                    budgetData.discountPercentage > 0 ? "approved" : "draft"
-                  }
+            <View
+              style={[
+                styles.customerDescriptionContainer,
+                styles.sectionPadding,
+              ]}
+            >
+              <View style={styles.customerDescriptionItem}>
+                <TextXs style={styles.customerDescriptionTitle}>Cliente</TextXs>
+                <TextSm style={styles.customerDescriptionValue}>
+                  {budgetData.customer}
+                </TextSm>
+              </View>
+              <View style={styles.customerDescriptionRow}>
+                <View style={styles.customerDescriptionItem}>
+                  <TextXs style={styles.customerDescriptionTitle}>
+                    Criado em
+                  </TextXs>
+                  <TextSm style={styles.customerDescriptionValue}>
+                    {new Date(budgetData.createdAt).toLocaleDateString()}
+                  </TextSm>
+                </View>
+                <View style={styles.customerDescriptionItem}>
+                  <TextXs style={styles.customerDescriptionTitle}>
+                    Atualizado em
+                  </TextXs>
+                  <TextSm style={styles.customerDescriptionValue}>
+                    {new Date(budgetData.updatedAt).toLocaleDateString()}
+                  </TextSm>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          <Section iconName="note-with-text" title="Serviços inclusos">
+            <View style={styles.includeServicesContainer}>
+              {budgetData.services.map((service) => (
+                <ServiceItem
+                  key={service.id}
+                  title={service.title}
+                  description={service.description}
+                  price={service.price}
+                  quantity={service.quantity}
+                  titleNumberOfLines={1}
+                  descriptionNumberOfLines={1}
+                />
+              ))}
+            </View>
+          </Section>
+
+          <View
+            style={[
+              styles.sectionContainer,
+              styles.sectionContainerRow,
+              styles.sectionPadding,
+            ]}
+          >
+            <IconTag name="shop" />
+            <View style={{ flex: 1 }}>
+              <View style={styles.budgetTotalRow}>
+                <TextSm style={styles.budgetTotalLabel}>Subtotal</TextSm>
+                <TitleXs style={styles.budgetTotalLabel}>
+                  {formatCurrency(budgetData.priceSubtotal)}
+                </TitleXs>
+              </View>
+              <View style={styles.budgetTotalRow}>
+                <View style={styles.budgetTotalRowGroup}>
+                  <TextSm style={styles.budgetTotalLabel}>Desconto</TextSm>
+                  <Tag
+                    text={`${budgetData.discountPercentage}% off`}
+                    variant={
+                      budgetData.discountPercentage > 0 ? "approved" : "draft"
+                    }
+                  />
+                </View>
+                {budgetData.discountAmount > 0 && (
+                  <TitleXs
+                    style={[
+                      styles.budgetTotalLabel,
+                      {
+                        color: "#30752F",
+                      },
+                    ]}
+                  >
+                    - {formatCurrency(budgetData.discountAmount)}
+                  </TitleXs>
+                )}
+              </View>
+              <View style={styles.divisor} />
+              <View style={styles.budgetTotalRow}>
+                <TitleSm style={styles.budgetTotalLabel}>
+                  Investimento total
+                </TitleSm>
+                <CurrencyValue
+                  value={budgetData.priceTotal}
+                  strong
+                  size="large"
                 />
               </View>
-              {budgetData.discountAmount > 0 && (
-                <TitleXs
-                  style={[
-                    styles.budgetTotalLabel,
-                    {
-                      color: "#30752F",
-                    },
-                  ]}
-                >
-                  - {formatCurrency(budgetData.discountAmount)}
-                </TitleXs>
-              )}
-            </View>
-            <View style={styles.divisor} />
-            <View style={styles.budgetTotalRow}>
-              <TitleSm style={styles.budgetTotalLabel}>
-                Investimento total
-              </TitleSm>
-              <CurrencyValue
-                value={budgetData.priceTotal}
-                strong
-                size="large"
-              />
             </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
 
       <View style={styles.footer}>
         <View style={styles.footerActionsGroup}>
@@ -264,7 +317,8 @@ export default function BudgetDetails({
         <Button
           text="Compartilhar"
           iconName="direction-up-right"
-          onPress={() => {}}
+          onPress={handleShareScreenshot}
+          disabled={isSharing}
         />
       </View>
     </ScreenContainer>
