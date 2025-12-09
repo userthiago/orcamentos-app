@@ -1,30 +1,28 @@
 import { useState } from "react";
-import { Button } from "@/components/button";
-import { Check } from "@/components/check";
-import { CurrencyValue } from "@/components/currency-value";
-import { Icon } from "@/components/icon";
-import { Input } from "@/components/input";
-import { InputPercentage } from "@/components/input-percentage";
-import { ScreenContainer } from "@/components/screen-container";
-import { Section } from "@/components/section";
-import { Status } from "@/components/status";
-import { TextSm, TextXs, TitleSm } from "@/components/typography";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+
 import { StackRoutesProps } from "@/routes/StackRoutes";
-import { BudgetStatusTypes } from "@/types/budget-status-types";
+import {
+  BUDGET_STATUS_DEFAULT_OPTION,
+  BUDGET_STATUS_OPTIONS,
+} from "@/config/budget-config";
 import { chunkArray } from "@/utils/array-utils";
 import { formatCurrency } from "@/utils/currency-utils";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { AddServiceModal } from "@/components/add-service-modal";
 import { ServiceType } from "@/types/service-type";
-import { ServiceItem } from "@/components/service-item";
-import { BUDGET_STATUS_DEFAULT_OPTION } from "@/config/budget-config";
+import { BudgetStatusTypes } from "@/types/budget-status-types";
 
-const STATUS_OPTIONS: BudgetStatusTypes[] = [
-  "draft",
-  "sent",
-  "approved",
-  "declined",
-];
+import { Icon } from "@/components/icon";
+import { Input } from "@/components/input";
+import { Check } from "@/components/check";
+import { Status } from "@/components/status";
+import { Button } from "@/components/button";
+import { Section } from "@/components/section";
+import { ServiceItem } from "@/components/service-item";
+import { CurrencyValue } from "@/components/currency-value";
+import { AddServiceModal } from "@/components/add-service-modal";
+import { InputPercentage } from "@/components/input-percentage";
+import { ScreenContainer } from "@/components/screen-container";
+import { TextSm, TextXs, TitleSm } from "@/components/typography";
 
 export default function AddBudget({
   navigation,
@@ -118,21 +116,24 @@ export default function AddBudget({
 
           <Section iconName="tag" title="Status">
             <View style={styles.statusContent}>
-              {chunkArray(STATUS_OPTIONS, 2).map(
-                (statusColumn, columnIndex) => (
-                  <View key={columnIndex} style={styles.statusColumn}>
-                    {statusColumn.map((statusItem) => (
-                      <Check
-                        key={statusItem}
-                        type="radio"
-                        isChecked={statusItem === status}
-                        label={<Status type={statusItem} />}
-                        onToggle={() => setStatus(statusItem)}
-                      />
-                    ))}
-                  </View>
-                )
-              )}
+              {chunkArray(
+                Object.values(BUDGET_STATUS_OPTIONS).map(
+                  (option) => option.value
+                ),
+                2
+              ).map((statusColumn, columnIndex) => (
+                <View key={columnIndex} style={styles.statusColumn}>
+                  {statusColumn.map((statusItem) => (
+                    <Check
+                      key={statusItem}
+                      type="radio"
+                      isChecked={statusItem === status}
+                      label={<Status type={statusItem} />}
+                      onToggle={() => setStatus(statusItem)}
+                    />
+                  ))}
+                </View>
+              ))}
             </View>
           </Section>
 

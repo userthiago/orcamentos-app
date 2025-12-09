@@ -1,5 +1,6 @@
-import { formatCurrency } from "@/utils/currency-utils";
 import { StyleSheet, Text } from "react-native";
+
+import { formatCurrency } from "@/utils/currency-utils";
 
 type Sizes = "small" | "medium" | "large";
 

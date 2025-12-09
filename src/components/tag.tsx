@@ -1,5 +1,7 @@
 import { StyleSheet, View, ViewProps } from "react-native";
+
 import { TitleXs } from "./typography";
+
 import { BudgetStatusTypes } from "@/types/budget-status-types";
 
 const statusTypes: Record<

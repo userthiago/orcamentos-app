@@ -1,15 +1,17 @@
-import { Button } from "@/components/button";
-import { FilterModal } from "@/components/filter-modal";
-import { Input } from "@/components/input";
-import { ScreenContainer } from "@/components/screen-container";
-import { ServiceBudgetCard } from "@/components/service-budget-card";
-import { TextSm, TitleLg } from "@/components/typography";
+import { useCallback, useState } from "react";
+import { FlatList, StyleSheet, View } from "react-native";
+
+import { StackRoutesProps } from "@/routes/StackRoutes";
 import { BUDGET_SORT_DEFAULT_OPTION } from "@/config/budget-config";
 import { SortOptions } from "@/enums/sort-options";
-import { StackRoutesProps } from "@/routes/StackRoutes";
 import { BudgetSummaryType } from "@/types/budge-summary-type";
-import { useCallback, useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+
+import { Input } from "@/components/input";
+import { Button } from "@/components/button";
+import { FilterModal } from "@/components/filter-modal";
+import { TextSm, TitleLg } from "@/components/typography";
+import { ScreenContainer } from "@/components/screen-container";
+import { ServiceBudgetCard } from "@/components/service-budget-card";
 
 const MOCK_BUDGETS: BudgetSummaryType[] = [
   {

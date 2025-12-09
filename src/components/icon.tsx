@@ -1,5 +1,6 @@
 import React from "react";
 import { SvgProps } from "react-native-svg";
+
 import * as Icons from "./icons";
 
 export type IconName =

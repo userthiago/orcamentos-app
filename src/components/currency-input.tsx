@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
-import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
-import { TitleMd } from "./typography";
+import { StyleSheet, View } from "react-native";
 import RNCurrencyInput, {
   CurrencyInputProps,
 } from "react-native-currency-input";
+
+import { TitleMd } from "./typography";
 
 interface Props extends CurrencyInputProps {
   isInvalid?: boolean;

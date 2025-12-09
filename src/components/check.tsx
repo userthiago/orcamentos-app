@@ -1,4 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
 import { Icon } from "./icon";
 import { TextMd } from "./typography";
 

@@ -1,15 +1,17 @@
+import { useEffect, useState } from "react";
 import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
-import { TextSm, TitleSm } from "./typography";
+
 import { Icon } from "./icon";
 import { Button } from "./button";
-import { useEffect, useState } from "react";
+import { Check } from "./check";
+import { Status } from "./status";
+import { TextSm, TitleSm } from "./typography";
+
 import {
   BUDGET_SORT_DEFAULT_OPTION,
   BUDGET_SORT_OPTIONS,
   BUDGET_STATUS_OPTIONS,
 } from "@/config/budget-config";
-import { Check } from "./check";
-import { Status } from "./status";
 
 interface Props {
   isVisible: boolean;

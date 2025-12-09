@@ -1,8 +1,9 @@
-import { BudgetStatusTypes } from "@/types/budget-status-types";
-import { StyleSheet, View, ViewProps } from "react-native";
-import { TitleXs } from "./typography";
+import { StyleSheet, ViewProps } from "react-native";
+
 import { Tag } from "./tag";
+
 import { BUDGET_STATUS_OPTIONS } from "@/config/budget-config";
+import { BudgetStatusTypes } from "@/types/budget-status-types";
 
 interface Props extends ViewProps {
   type: BudgetStatusTypes;

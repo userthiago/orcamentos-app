@@ -6,6 +6,7 @@ import {
   TextInputProps,
   View,
 } from "react-native";
+
 import { TitleMd } from "./typography";
 
 interface InputProps extends TextInputProps {

@@ -1,10 +1,11 @@
-import AddBudget from "@/app/AddBudget";
-import BudgetDetails from "@/app/BudgetDetails";
-import Home from "@/app/Home";
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from "@react-navigation/native-stack";
+
+import Home from "@/app/Home";
+import AddBudget from "@/app/AddBudget";
+import BudgetDetails from "@/app/BudgetDetails";
 
 export type StackRoutesList = {
   home: undefined;

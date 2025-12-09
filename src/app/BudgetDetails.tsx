@@ -1,14 +1,10 @@
 import { useState } from "react";
-import { Button } from "@/components/button";
-import { Check } from "@/components/check";
-import { CurrencyValue } from "@/components/currency-value";
-import { Icon } from "@/components/icon";
-import { Input } from "@/components/input";
-import { InputPercentage } from "@/components/input-percentage";
-import { ScreenContainer } from "@/components/screen-container";
-import { Section } from "@/components/section";
-import { ServiceItem } from "@/components/service-item";
-import { Status } from "@/components/status";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+
+import { StackRoutesProps } from "@/routes/StackRoutes";
+import { formatCurrency } from "@/utils/currency-utils";
+import { BudgetStatusTypes } from "@/types/budget-status-types";
+
 import {
   TextSm,
   TextXs,
@@ -16,56 +12,45 @@ import {
   TitleSm,
   TitleXs,
 } from "@/components/typography";
-import { StackRoutesProps } from "@/routes/StackRoutes";
-import { BudgetStatusTypes } from "@/types/budget-status-types";
-import { chunkArray } from "@/utils/array-utils";
-import { formatCurrency } from "@/utils/currency-utils";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { IconTag } from "@/components/icon-tag";
 import { Tag } from "@/components/tag";
+import { Icon } from "@/components/icon";
+import { Button } from "@/components/button";
+import { Status } from "@/components/status";
+import { Section } from "@/components/section";
+import { IconTag } from "@/components/icon-tag";
+import { ServiceItem } from "@/components/service-item";
+import { CurrencyValue } from "@/components/currency-value";
+import { ScreenContainer } from "@/components/screen-container";
 
 const MOCK_SERVICES = [
   {
     id: "1",
     title: "Desenvolvimento de website",
     description: "Criação de um website responsivo e moderno",
-    value: 5000,
+    price: 5000,
     quantity: 1,
   },
   {
     id: "2",
     title: "Design de logo",
     description: "Criação de uma identidade visual única",
-    value: 1200,
+    price: 1200,
     quantity: 1,
   },
   {
     id: "3",
     title: "Manutenção mensal",
     description: "Atualizações e suporte contínuo",
-    value: 300,
+    price: 300,
     quantity: 12,
   },
   {
     id: "4",
     title: "Consultoria em marketing digital",
     description: "Estratégias para aumentar a presença online",
-    value: 2000,
+    price: 2000,
     quantity: 1,
   },
-];
-
-const STATUS_OPTIONS: BudgetStatusTypes[] = [
-  "draft",
-  "sent",
-  "approved",
-  "declined",
 ];
 
 export default function BudgetDetails({
@@ -136,7 +121,7 @@ export default function BudgetDetails({
                 key={service.id}
                 title={service.title}
                 description={service.description}
-                value={service.value}
+                price={service.price}
                 quantity={service.quantity}
                 titleNumberOfLines={1}
                 descriptionNumberOfLines={1}

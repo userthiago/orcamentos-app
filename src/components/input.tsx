@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
+
 import { Icon } from "./icon";
 
 interface Props extends TextInputProps {

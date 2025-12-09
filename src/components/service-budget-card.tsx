@@ -5,9 +5,10 @@ import {
   TouchableOpacityProps,
   View,
 } from "react-native";
+
 import { Status } from "./status";
-import { CurrencyValue } from "./currency-value";
 import { TextSm, TitleMd } from "./typography";
+import { CurrencyValue } from "./currency-value";
 
 interface Props extends TouchableOpacityProps {
   status: BudgetStatusTypes;

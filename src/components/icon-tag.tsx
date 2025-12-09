@@ -1,4 +1,5 @@
 import { StyleSheet, View } from "react-native";
+
 import { Icon, IconName } from "./icon";
 
 interface Props {

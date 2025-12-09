@@ -3,8 +3,9 @@ import {
   TouchableOpacity,
   TouchableOpacityProps,
 } from "react-native";
-import { Icon, IconName } from "./icon";
+
 import { TitleSm } from "./typography";
+import { Icon, IconName } from "./icon";
 
 type Variant = "primary" | "secondary" | "danger";
 

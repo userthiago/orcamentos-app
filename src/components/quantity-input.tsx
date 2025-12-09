@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
 import { Icon } from "./icon";
 
 interface Props

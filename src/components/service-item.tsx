@@ -1,7 +1,8 @@
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { CurrencyValue } from "./currency-value";
+
 import { Icon } from "./icon";
 import { TextXs, TitleSm } from "./typography";
+import { CurrencyValue } from "./currency-value";
 
 interface Props {
   title: string;

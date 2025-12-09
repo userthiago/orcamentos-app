@@ -1,6 +1,7 @@
 import { StyleSheet, View, ViewProps } from "react-native";
-import { Icon, IconName } from "./icon";
+
 import { TextXs } from "./typography";
+import { Icon, IconName } from "./icon";
 
 interface Props extends ViewProps {
   children: React.ReactNode;
