@@ -1,29 +1,38 @@
+import { useEffect, useState } from "react";
 import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
-import { TitleSm } from "./typography";
+import * as Crypto from "expo-crypto";
+
+import { ServiceType } from "@/types/service-type";
+
 import { Icon } from "./icon";
-import { Button } from "./button";
-import { ServiceItemType } from "@/types/service-item-type";
 import { Input } from "./input";
+import { Button } from "./button";
+import { TitleSm } from "./typography";
 import { QuantityInput } from "./quantity-input";
-import { useState } from "react";
 
 interface Props {
   isVisible: boolean;
-  onAddService: (data: ServiceItemType) => void;
+  editData?: ServiceType;
+  onSaveService: (data: ServiceType) => void;
+  onRemoveService: (id: string) => void;
   onToggleVisibility: () => void;
 }
 
 export function AddServiceModal({
   isVisible,
-  onAddService,
+  editData,
+  onSaveService,
+  onRemoveService,
   onToggleVisibility,
 }: Props) {
+  const [id, setId] = useState<string | undefined>(undefined);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState<number | undefined>(undefined);
   const [quantity, setQuantity] = useState<number | undefined>(undefined);
 
   const resetFields = () => {
+    setId(undefined);
     setTitle("");
     setDescription("");
     setPrice(undefined);
@@ -31,8 +40,11 @@ export function AddServiceModal({
   };
 
   const handleCancel = () => {
-    resetFields();
+    if (id) {
+      onRemoveService(id);
+    }
     onToggleVisibility();
+    resetFields();
   };
 
   const handleSaveService = () => {
@@ -40,18 +52,26 @@ export function AddServiceModal({
       return;
     }
 
-    const newService: ServiceItemType = {
-      id: String(new Date().getTime()),
+    const newService: ServiceType = {
+      id: id ?? Crypto.randomUUID(),
       title,
       description,
       price,
       quantity,
     };
 
-    onAddService(newService);
-    resetFields();
+    onSaveService(newService);
     onToggleVisibility();
+    resetFields();
   };
+
+  useEffect(() => {
+    setId(editData?.id);
+    setTitle(editData?.title || "");
+    setDescription(editData?.description || "");
+    setPrice(editData?.price);
+    setQuantity(editData?.quantity);
+  }, [editData]);
 
   return (
     <Modal
@@ -95,8 +115,13 @@ export function AddServiceModal({
           </View>
         </View>
         <View style={styles.footer}>
-          <Button iconName="trash-2" variant="danger" onPress={resetFields} />
-          <Button text="Salvar" iconName="check" onPress={handleSaveService} />
+          <Button iconName="trash-2" variant="danger" onPress={handleCancel} />
+          <Button
+            text="Salvar"
+            iconName="check"
+            onPress={handleSaveService}
+            disabled={!title || !description || !price || !quantity}
+          />
         </View>
       </View>
       <TouchableOpacity style={styles.backdrop} onPress={onToggleVisibility} />

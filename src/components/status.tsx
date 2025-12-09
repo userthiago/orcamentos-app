@@ -1,4 +1,4 @@
-import { BudgetStatusTypes } from "@/types/budget-status";
+import { BudgetStatusTypes } from "@/types/budget-status-types";
 import { StyleSheet, View, ViewProps } from "react-native";
 import { TitleXs } from "./typography";
 import { Tag } from "./tag";

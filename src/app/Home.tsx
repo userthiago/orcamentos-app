@@ -7,14 +7,14 @@ import { TextSm, TitleLg } from "@/components/typography";
 import { BUDGET_SORT_DEFAULT_OPTION } from "@/config/budget-config";
 import { SortOptions } from "@/enums/sort-options";
 import { StackRoutesProps } from "@/routes/StackRoutes";
-import { BudgetSummaryItem } from "@/types/budge-summary-item";
+import { BudgetSummaryType } from "@/types/budge-summary-type";
 import { useCallback, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 
-const MOCK_BUDGETS: BudgetSummaryItem[] = [
+const MOCK_BUDGETS: BudgetSummaryType[] = [
   {
     id: "1",
-    description: "Desenvolvimento de aplicativo de loja online",
+    title: "Desenvolvimento de aplicativo de loja online",
     customer: "Soluções Tecnológicas Beta",
     price: 22300,
     status: "approved",
@@ -22,7 +22,7 @@ const MOCK_BUDGETS: BudgetSummaryItem[] = [
   },
   {
     id: "2",
-    description: "Consultoria em marketing digital",
+    title: "Consultoria em marketing digital",
     customer: "Marketing Wizards",
     price: 4000,
     status: "draft",
@@ -30,7 +30,7 @@ const MOCK_BUDGETS: BudgetSummaryItem[] = [
   },
   {
     id: "3",
-    description: "Serviços de SEO",
+    title: "Serviços de SEO",
     customer: "SEO Masters",
     price: 3500,
     status: "sent",
@@ -38,7 +38,7 @@ const MOCK_BUDGETS: BudgetSummaryItem[] = [
   },
   {
     id: "4",
-    description: "Gestão de redes sociais",
+    title: "Gestão de redes sociais",
     customer: "Social Experts",
     price: 1800,
     status: "declined",
@@ -46,7 +46,7 @@ const MOCK_BUDGETS: BudgetSummaryItem[] = [
   },
   {
     id: "5",
-    description: "Desenvolvimento de website corporativo",
+    title: "Desenvolvimento de website corporativo",
     customer: "Corporate Web Solutions",
     price: 12500,
     status: "approved",
@@ -54,7 +54,7 @@ const MOCK_BUDGETS: BudgetSummaryItem[] = [
   },
   {
     id: "6",
-    description: "Campanha de publicidade online",
+    title: "Campanha de publicidade online",
     customer: "Ad Creators",
     price: 6000,
     status: "sent",
@@ -62,7 +62,7 @@ const MOCK_BUDGETS: BudgetSummaryItem[] = [
   },
   {
     id: "7",
-    description: "Design gráfico para materiais promocionais",
+    title: "Design gráfico para materiais promocionais",
     customer: "Creative Designs",
     price: 2700,
     status: "draft",
@@ -70,7 +70,7 @@ const MOCK_BUDGETS: BudgetSummaryItem[] = [
   },
   {
     id: "8",
-    description: "Desenvolvimento de sistema de gestão empresarial",
+    title: "Desenvolvimento de sistema de gestão empresarial",
     customer: "Enterprise Solutions",
     price: 30000,
     status: "approved",
@@ -78,7 +78,7 @@ const MOCK_BUDGETS: BudgetSummaryItem[] = [
   },
   {
     id: "9",
-    description: "Serviços de tradução e localização",
+    title: "Serviços de tradução e localização",
     customer: "Global Translations",
     price: 4500,
     status: "sent",
@@ -87,7 +87,7 @@ const MOCK_BUDGETS: BudgetSummaryItem[] = [
 ];
 
 export default function Home({ navigation }: StackRoutesProps<"home">) {
-  const [budgets, setBudgets] = useState<BudgetSummaryItem[]>(MOCK_BUDGETS);
+  const [budgets, setBudgets] = useState<BudgetSummaryType[]>(MOCK_BUDGETS);
   const [isFilterModalVisible, setIsFilterModalVisible] =
     useState<boolean>(false);
   const [filters, setFilters] = useState<{
@@ -170,7 +170,7 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
             renderItem={({ item }) => (
               <ServiceBudgetCard
                 status={item.status}
-                description={item.description}
+                title={item.title}
                 customer={item.customer}
                 price={item.price}
                 onPress={() =>

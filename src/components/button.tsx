@@ -9,7 +9,7 @@ import { TitleSm } from "./typography";
 type Variant = "primary" | "secondary" | "danger";
 
 const variantStyles: Record<
-  Variant,
+  Variant | "disabled",
   {
     backgroundColor: string;
     borderColor: string;
@@ -35,6 +35,12 @@ const variantStyles: Record<
     textColor: "#DB4D4D",
     iconColor: "#DB4D4D",
   },
+  disabled: {
+    backgroundColor: "#F0F0F0",
+    borderColor: "#F0F0F0",
+    textColor: "#A8A8A8",
+    iconColor: "#A8A8A8",
+  },
 };
 
 interface Props extends TouchableOpacityProps {
@@ -47,10 +53,12 @@ export function Button({
   text,
   iconName,
   variant = "primary",
+  disabled,
   ...rest
 }: Props) {
-  const { backgroundColor, borderColor, textColor, iconColor } =
-    variantStyles[variant];
+  const { backgroundColor, borderColor, textColor, iconColor } = disabled
+    ? variantStyles["disabled"]
+    : variantStyles[variant];
 
   return (
     <TouchableOpacity
@@ -62,6 +70,7 @@ export function Button({
         },
       ]}
       activeOpacity={0.5}
+      disabled={disabled}
       {...rest}
     >
       {!!iconName && <Icon name={iconName} size={24} color={iconColor} />}

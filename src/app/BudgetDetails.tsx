@@ -17,7 +17,7 @@ import {
   TitleXs,
 } from "@/components/typography";
 import { StackRoutesProps } from "@/routes/StackRoutes";
-import { BudgetStatusTypes } from "@/types/budget-status";
+import { BudgetStatusTypes } from "@/types/budget-status-types";
 import { chunkArray } from "@/utils/array-utils";
 import { formatCurrency } from "@/utils/currency-utils";
 import {

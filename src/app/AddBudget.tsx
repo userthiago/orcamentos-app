@@ -10,50 +10,14 @@ import { Section } from "@/components/section";
 import { Status } from "@/components/status";
 import { TextSm, TextXs, TitleSm } from "@/components/typography";
 import { StackRoutesProps } from "@/routes/StackRoutes";
-import { BudgetStatusTypes } from "@/types/budget-status";
+import { BudgetStatusTypes } from "@/types/budget-status-types";
 import { chunkArray } from "@/utils/array-utils";
 import { formatCurrency } from "@/utils/currency-utils";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { AddServiceModal } from "@/components/add-service-modal";
-import { ServiceItemType } from "@/types/service-item-type";
+import { ServiceType } from "@/types/service-type";
 import { ServiceItem } from "@/components/service-item";
-
-const MOCK_SERVICES = [
-  {
-    id: "1",
-    title: "Desenvolvimento de website",
-    description: "Criação de um website responsivo e moderno",
-    value: 5000,
-    quantity: 1,
-  },
-  {
-    id: "2",
-    title: "Design de logo",
-    description: "Criação de uma identidade visual única",
-    value: 1200,
-    quantity: 1,
-  },
-  {
-    id: "3",
-    title: "Manutenção mensal",
-    description: "Atualizações e suporte contínuo",
-    value: 300,
-    quantity: 12,
-  },
-  {
-    id: "4",
-    title: "Consultoria em marketing digital",
-    description: "Estratégias para aumentar a presença online",
-    value: 2000,
-    quantity: 1,
-  },
-];
+import { BUDGET_STATUS_DEFAULT_OPTION } from "@/config/budget-config";
 
 const STATUS_OPTIONS: BudgetStatusTypes[] = [
   "draft",
@@ -66,19 +30,59 @@ export default function AddBudget({
   navigation,
 }: StackRoutesProps<"addBudget">) {
   const { goBack } = navigation;
-  const [selectedStatus, setSelectedStatus] =
-    useState<BudgetStatusTypes>("draft");
+
+  const [title, setTitle] = useState("");
+  const [customer, setCustomer] = useState("");
+  const [status, setStatus] = useState<BudgetStatusTypes>(
+    BUDGET_STATUS_DEFAULT_OPTION.value
+  );
+  const [services, setServices] = useState<ServiceType[]>([]);
+  const [discountPercentage, setDiscountPercentage] = useState<number>(0);
+
+  const [selectedServiceToEdit, setSelectedServiceToEdit] = useState<
+    ServiceType | undefined
+  >(undefined);
+
+  const priceSubtotal = services.reduce(
+    (acc, service) => acc + service.price * service.quantity,
+    0
+  );
+  const discountAmount = (priceSubtotal * discountPercentage) / 100;
+  const priceTotal = priceSubtotal - discountAmount;
 
   const [isAddServiceModalVisible, setIsAddServiceModalVisible] =
     useState(false);
 
   const handleToggleAddServiceModal = () => {
+    if (isAddServiceModalVisible) {
+      setSelectedServiceToEdit(undefined);
+    }
     setIsAddServiceModalVisible((prev) => !prev);
   };
 
-  const handleAddService = (data: ServiceItemType) => {
-    // Implement the logic to add a new service
+  const handleSaveService = (data: ServiceType) => {
+    const isEditing = Boolean(
+      services.find((service) => service.id === data.id)
+    );
+
+    if (isEditing) {
+      setServices((prevServices) =>
+        prevServices.map((service) => (service.id === data.id ? data : service))
+      );
+    } else {
+      setServices((prevServices) => [...prevServices, data]);
+    }
+  };
+
+  const handleSelectServiceToEdit = (service: ServiceType) => {
+    setSelectedServiceToEdit(service);
     handleToggleAddServiceModal();
+  };
+
+  const handleRemoveService = (id: string) => {
+    setServices((prevServices) =>
+      prevServices.filter((service) => service.id !== id)
+    );
   };
 
   return (
@@ -99,8 +103,16 @@ export default function AddBudget({
         >
           <Section iconName="shop" title="Informações gerais">
             <View style={styles.generalInformationContent}>
-              <Input placeholder="Título" />
-              <Input placeholder="Cliente" />
+              <Input
+                placeholder="Título"
+                value={title}
+                onChangeText={setTitle}
+              />
+              <Input
+                placeholder="Cliente"
+                value={customer}
+                onChangeText={setCustomer}
+              />
             </View>
           </Section>
 
@@ -109,13 +121,13 @@ export default function AddBudget({
               {chunkArray(STATUS_OPTIONS, 2).map(
                 (statusColumn, columnIndex) => (
                   <View key={columnIndex} style={styles.statusColumn}>
-                    {statusColumn.map((status) => (
+                    {statusColumn.map((statusItem) => (
                       <Check
-                        key={status}
+                        key={statusItem}
                         type="radio"
-                        isChecked={selectedStatus === status}
-                        label={<Status type={status} />}
-                        onToggle={() => setSelectedStatus(status)}
+                        isChecked={statusItem === status}
+                        label={<Status type={statusItem} />}
+                        onToggle={() => setStatus(statusItem)}
                       />
                     ))}
                   </View>
@@ -126,16 +138,16 @@ export default function AddBudget({
 
           <Section iconName="note-with-text" title="Serviços inclusos">
             <View style={styles.includeServicesContainer}>
-              {MOCK_SERVICES.map((service) => (
+              {services.map((service) => (
                 <ServiceItem
                   key={service.id}
                   title={service.title}
                   description={service.description}
-                  value={service.value}
+                  price={service.price}
                   quantity={service.quantity}
                   titleNumberOfLines={1}
                   descriptionNumberOfLines={1}
-                  onEditPress={() => {}}
+                  onEditPress={() => handleSelectServiceToEdit(service)}
                 />
               ))}
               <Button
@@ -156,33 +168,43 @@ export default function AddBudget({
               <View style={styles.investimentContentRow}>
                 <TextSm>Subtotal</TextSm>
                 <View style={[styles.investimentContentRowGroup, { gap: 12 }]}>
-                  <TextXs>8 itens</TextXs>
-                  <CurrencyValue value={3847.5} size="small" />
+                  <TextXs>
+                    {services.length} item{services.length !== 1 ? "s" : ""}
+                  </TextXs>
+                  <CurrencyValue value={priceSubtotal} size="small" />
                 </View>
               </View>
               <View style={styles.investimentContentRow}>
                 <View style={[styles.investimentContentRowGroup, { gap: 8 }]}>
                   <TextSm>Desconto</TextSm>
-                  <InputPercentage placeholder="0" />
+                  <InputPercentage
+                    placeholder="0"
+                    value={String(discountPercentage)}
+                    onChangeText={(text) => setDiscountPercentage(Number(text))}
+                  />
                 </View>
-                <TextSm style={{ color: "#DB4D4D" }}>
-                  - {formatCurrency(200)}
+                <TextSm
+                  style={{ color: discountAmount > 0 ? "#DB4D4D" : "#4A4A4A" }}
+                >
+                  - {formatCurrency(discountAmount)}
                 </TextSm>
               </View>
             </View>
             <View style={styles.investimentFooter}>
               <TitleSm>Valor total</TitleSm>
               <View style={styles.investimentFooterValueContainer}>
-                <TextXs
-                  style={{
-                    color: "#4A4A4A",
-                    textDecorationColor: "#4A4A4A",
-                    textDecorationLine: "line-through",
-                  }}
-                >
-                  R$ 11.500,00
-                </TextXs>
-                <CurrencyValue value={3847.5} strong size="large" />
+                {priceSubtotal !== priceTotal && (
+                  <TextXs
+                    style={{
+                      color: "#4A4A4A",
+                      textDecorationColor: "#4A4A4A",
+                      textDecorationLine: "line-through",
+                    }}
+                  >
+                    {formatCurrency(priceSubtotal)}
+                  </TextXs>
+                )}
+                <CurrencyValue value={priceTotal} strong size="large" />
               </View>
             </View>
           </Section>
@@ -199,8 +221,10 @@ export default function AddBudget({
       </ScreenContainer>
       <AddServiceModal
         isVisible={isAddServiceModalVisible}
+        editData={selectedServiceToEdit}
         onToggleVisibility={handleToggleAddServiceModal}
-        onAddService={handleAddService}
+        onSaveService={handleSaveService}
+        onRemoveService={handleRemoveService}
       />
     </>
   );

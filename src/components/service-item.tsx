@@ -6,7 +6,7 @@ import { TextXs, TitleSm } from "./typography";
 interface Props {
   title: string;
   description: string;
-  value: number;
+  price: number;
   quantity: number;
   titleNumberOfLines?: number;
   descriptionNumberOfLines?: number;
@@ -17,7 +17,7 @@ interface Props {
 export function ServiceItem({
   title,
   description,
-  value,
+  price,
   quantity,
   titleNumberOfLines,
   descriptionNumberOfLines,
@@ -36,7 +36,7 @@ export function ServiceItem({
         </TextXs>
       </View>
       <View style={styles.valueContainer}>
-        <CurrencyValue value={value} strong />
+        <CurrencyValue value={price} strong />
         <TextXs style={{ color: "#676767" }}>Qt: {quantity}</TextXs>
       </View>
       {onEditPress && (

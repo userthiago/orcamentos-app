@@ -1,4 +1,4 @@
-import { BudgetStatusTypes } from "@/types/budget-status";
+import { BudgetStatusTypes } from "@/types/budget-status-types";
 import {
   StyleSheet,
   TouchableOpacity,
@@ -11,22 +11,22 @@ import { TextSm, TitleMd } from "./typography";
 
 interface Props extends TouchableOpacityProps {
   status: BudgetStatusTypes;
-  description: string;
+  title: string;
   customer: string;
   price: number;
 }
 
 export function ServiceBudgetCard({
   status,
-  description,
+  title,
   customer,
   price,
   ...rest
 }: Props) {
   return (
     <TouchableOpacity style={styles.card} activeOpacity={0.5} {...rest}>
-      <View style={styles.descriptionContainer}>
-        <TitleMd numberOfLines={2}>{description}</TitleMd>
+      <View style={styles.titleContainer}>
+        <TitleMd numberOfLines={2}>{title}</TitleMd>
         <TextSm numberOfLines={1}>{customer}</TextSm>
       </View>
       <View style={styles.priceContainer}>
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     borderColor: "#F0F0F0",
     borderRadius: 10,
   },
-  descriptionContainer: {
+  titleContainer: {
     flex: 1,
     gap: 8,
   },
