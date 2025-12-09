@@ -4,7 +4,6 @@ import { FlatList, StyleSheet, View } from "react-native";
 import { StackRoutesProps } from "@/routes/StackRoutes";
 import { BUDGET_SORT_DEFAULT_OPTION } from "@/config/budget-config";
 import { SortOptions } from "@/enums/sort-options";
-import { BudgetSummaryType } from "@/types/budge-summary-type";
 
 import { Input } from "@/components/input";
 import { Button } from "@/components/button";
@@ -12,84 +11,14 @@ import { FilterModal } from "@/components/filter-modal";
 import { TextSm, TitleLg } from "@/components/typography";
 import { ScreenContainer } from "@/components/screen-container";
 import { ServiceBudgetCard } from "@/components/service-budget-card";
-
-const MOCK_BUDGETS: BudgetSummaryType[] = [
-  {
-    id: "1",
-    title: "Desenvolvimento de aplicativo de loja online",
-    customer: "Soluções Tecnológicas Beta",
-    price: 22300,
-    status: "approved",
-    createdAt: "2024-01-15",
-  },
-  {
-    id: "2",
-    title: "Consultoria em marketing digital",
-    customer: "Marketing Wizards",
-    price: 4000,
-    status: "draft",
-    createdAt: "2024-02-10",
-  },
-  {
-    id: "3",
-    title: "Serviços de SEO",
-    customer: "SEO Masters",
-    price: 3500,
-    status: "sent",
-    createdAt: "2024-03-05",
-  },
-  {
-    id: "4",
-    title: "Gestão de redes sociais",
-    customer: "Social Experts",
-    price: 1800,
-    status: "declined",
-    createdAt: "2024-04-20",
-  },
-  {
-    id: "5",
-    title: "Desenvolvimento de website corporativo",
-    customer: "Corporate Web Solutions",
-    price: 12500,
-    status: "approved",
-    createdAt: "2024-05-12",
-  },
-  {
-    id: "6",
-    title: "Campanha de publicidade online",
-    customer: "Ad Creators",
-    price: 6000,
-    status: "sent",
-    createdAt: "2024-06-18",
-  },
-  {
-    id: "7",
-    title: "Design gráfico para materiais promocionais",
-    customer: "Creative Designs",
-    price: 2700,
-    status: "draft",
-    createdAt: "2024-07-22",
-  },
-  {
-    id: "8",
-    title: "Desenvolvimento de sistema de gestão empresarial",
-    customer: "Enterprise Solutions",
-    price: 30000,
-    status: "approved",
-    createdAt: "2024-08-30",
-  },
-  {
-    id: "9",
-    title: "Serviços de tradução e localização",
-    customer: "Global Translations",
-    price: 4500,
-    status: "sent",
-    createdAt: "2024-09-14",
-  },
-];
+import { useFocusEffect } from "@react-navigation/native";
+import { BudgetStorage } from "@/storage/budget-storage";
+import { EmptyBudgetList } from "@/components/empty-budget-list";
+import { BudgetType } from "@/types/budget-type";
 
 export default function Home({ navigation }: StackRoutesProps<"home">) {
-  const [budgets, setBudgets] = useState<BudgetSummaryType[]>(MOCK_BUDGETS);
+  const [storageBudgets, setStorageBudgets] = useState<BudgetType[]>([]);
+  const [budgets, setBudgets] = useState<BudgetType[]>([]);
   const [isFilterModalVisible, setIsFilterModalVisible] =
     useState<boolean>(false);
   const [filters, setFilters] = useState<{
@@ -97,7 +26,7 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
     sortOption: string;
   }>({ statuses: [], sortOption: BUDGET_SORT_DEFAULT_OPTION.value });
 
-  const draftAmount = MOCK_BUDGETS.filter(
+  const draftAmount = storageBudgets.filter(
     (budget) => budget.status === "draft"
   ).length;
 
@@ -105,38 +34,64 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
     setIsFilterModalVisible((prev) => !prev);
   };
 
-  const applyFilters = useCallback((statuses: string[], sortOption: string) => {
-    let filteredBudgets = [...MOCK_BUDGETS];
-
-    // Filtrar por status
-    if (statuses.length > 0) {
-      filteredBudgets = filteredBudgets.filter((budget) =>
-        statuses.includes(budget.status)
-      );
-    }
-
-    // Ordenar por opção selecionada
-    if (sortOption === SortOptions.HIGHEST_VALUE) {
-      filteredBudgets.sort((a, b) => b.price - a.price);
-    } else if (sortOption === SortOptions.LOWEST_VALUE) {
-      filteredBudgets.sort((a, b) => a.price - b.price);
-    } else if (sortOption === SortOptions.MOST_RECENT) {
-      filteredBudgets.sort((a, b) => {
-        return (
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
+  const resetFilters = useCallback(
+    (budgetsData?: BudgetType[]) => {
+      setBudgets(budgetsData ?? storageBudgets);
+      setFilters({
+        statuses: [],
+        sortOption: BUDGET_SORT_DEFAULT_OPTION.value,
       });
-    } else if (sortOption === SortOptions.LEAST_RECENT) {
-      filteredBudgets.sort((a, b) => {
-        return (
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
-      });
-    }
+    },
+    [storageBudgets]
+  );
 
-    setFilters({ statuses, sortOption });
-    setBudgets(filteredBudgets);
+  const applyFilters = useCallback(
+    async (statuses: string[], sortOption: string) => {
+      let filteredBudgets = [...storageBudgets];
+
+      // Filtrar por status
+      if (statuses.length > 0) {
+        filteredBudgets = filteredBudgets.filter((budget) =>
+          statuses.includes(budget.status)
+        );
+      }
+
+      // Ordenar por opção selecionada
+      if (sortOption === SortOptions.HIGHEST_VALUE) {
+        filteredBudgets.sort((a, b) => b.price - a.price);
+      } else if (sortOption === SortOptions.LOWEST_VALUE) {
+        filteredBudgets.sort((a, b) => a.price - b.price);
+      } else if (sortOption === SortOptions.MOST_RECENT) {
+        filteredBudgets.sort((a, b) => {
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        });
+      } else if (sortOption === SortOptions.LEAST_RECENT) {
+        filteredBudgets.sort((a, b) => {
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+        });
+      }
+
+      setFilters({ statuses, sortOption });
+      setBudgets(filteredBudgets);
+    },
+    []
+  );
+
+  const loadBudgets = useCallback(async () => {
+    const budgets = await BudgetStorage.get();
+    setStorageBudgets(budgets);
+    resetFilters(budgets);
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadBudgets();
+    }, [])
+  );
 
   return (
     <>
@@ -181,11 +136,16 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
               />
             )}
             style={{ flex: 1 }}
+            bounces={budgets.length > 0}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingBottom: 64,
-              gap: 8,
-            }}
+            ListEmptyComponent={<EmptyBudgetList />}
+            contentContainerStyle={[
+              {
+                paddingBottom: 64,
+                gap: 8,
+              },
+              budgets.length === 0 && { flex: 1, justifyContent: "center" },
+            ]}
           />
         </View>
       </ScreenContainer>
