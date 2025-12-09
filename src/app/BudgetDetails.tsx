@@ -1,6 +1,13 @@
 import { useCallback, useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import * as Crypto from "expo-crypto";
 
 import { StackRoutesProps } from "@/routes/StackRoutes";
 import { formatCurrency } from "@/utils/currency-utils";
@@ -23,6 +30,7 @@ import { IconTag } from "@/components/icon-tag";
 import { ServiceItem } from "@/components/service-item";
 import { CurrencyValue } from "@/components/currency-value";
 import { ScreenContainer } from "@/components/screen-container";
+import { getNextBudgetNumber } from "@/utils/budget-utils";
 
 export default function BudgetDetails({
   navigation,
@@ -35,6 +43,45 @@ export default function BudgetDetails({
   const loadBudgetData = async (id: string) => {
     const data = await BudgetStorage.getById(id);
     setBudgetData(data);
+  };
+
+  const handleDuplicateBudget = async () => {
+    if (budgetData) {
+      const budgetNextNumber = await BudgetStorage.getLastBudgetNumber();
+      const newBudgetData: BudgetType = {
+        ...budgetData,
+        id: Crypto.randomUUID(),
+        budgetNumber: getNextBudgetNumber(budgetNextNumber),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      await BudgetStorage.add(newBudgetData);
+
+      Alert.alert("Cotação duplicada com sucesso");
+      goBack();
+    }
+  };
+
+  const handleRemoveBudget = async (id: string) => {
+    Alert.alert(
+      "Excluir cotação",
+      "Tem certeza que deseja excluir esta cotação?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Excluir",
+          style: "destructive",
+          onPress: async () => {
+            await BudgetStorage.remove(id);
+            goBack();
+          },
+        },
+      ]
+    );
   };
 
   useFocusEffect(
@@ -83,7 +130,7 @@ export default function BudgetDetails({
                   Criado em
                 </TextXs>
                 <TextSm style={styles.customerDescriptionValue}>
-                  {budgetData.createdAt}
+                  {new Date(budgetData.createdAt).toLocaleDateString()}
                 </TextSm>
               </View>
               <View style={styles.customerDescriptionItem}>
@@ -91,7 +138,7 @@ export default function BudgetDetails({
                   Atualizado em
                 </TextXs>
                 <TextSm style={styles.customerDescriptionValue}>
-                  {budgetData.updatedAt}
+                  {new Date(budgetData.updatedAt).toLocaleDateString()}
                 </TextSm>
               </View>
             </View>
@@ -171,12 +218,12 @@ export default function BudgetDetails({
           <Button
             variant="danger"
             iconName="trash-2"
-            onPress={() => goBack()}
+            onPress={() => handleRemoveBudget(budgetData.id)}
           />
           <Button
             variant="secondary"
             iconName="copy"
-            onPress={() => goBack()}
+            onPress={handleDuplicateBudget}
           />
           <Button
             variant="secondary"
@@ -224,8 +271,7 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   sectionPadding: {
-    paddingVertical: 16,
-    paddingHorizontal: 20,
+    padding: 16,
   },
   customerTitleContainer: {
     flexDirection: "row",

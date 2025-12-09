@@ -30,14 +30,14 @@ export function AddServiceModal({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState<number | null>(null);
-  const [quantity, setQuantity] = useState<number | undefined>(undefined);
+  const [quantity, setQuantity] = useState<number | undefined>(1);
 
   const resetFields = () => {
     setId(undefined);
     setTitle("");
     setDescription("");
     setPrice(null);
-    setQuantity(undefined);
+    setQuantity(1);
   };
 
   const handleCancel = () => {
