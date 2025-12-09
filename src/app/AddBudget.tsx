@@ -97,74 +97,104 @@ export default function AddBudget({
     const budgetId = route.params?.budgetId;
 
     if (budgetId) {
-      const existingBudget = await BudgetStorage.getById(budgetId);
+      try {
+        const existingBudget = await BudgetStorage.getById(budgetId);
 
-      if (!existingBudget) {
-        Alert.alert("Erro", "Orçamento não encontrado para atualização");
+        if (!existingBudget) {
+          Alert.alert("Erro", "Orçamento não encontrado para atualização");
+          goBack();
+          return;
+        }
+
+        const updatedBudget: BudgetType = {
+          ...existingBudget,
+          title,
+          customer,
+          status,
+          services,
+          discountPercentage,
+          discountAmount,
+          priceSubtotal,
+          priceTotal,
+          updatedAt: new Date().toISOString(),
+        };
+
+        await BudgetStorage.update(updatedBudget);
+
+        Alert.alert("Sucesso", "Cotação atualizada com sucesso");
         goBack();
-        return;
+      } catch (error) {
+        Alert.alert(
+          "Erro",
+          error instanceof Error
+            ? error.message
+            : "Não foi possível atualizar o orçamento"
+        );
+        goBack();
       }
-
-      const updatedBudget: BudgetType = {
-        ...existingBudget,
-        title,
-        customer,
-        status,
-        services,
-        discountPercentage,
-        discountAmount,
-        priceSubtotal,
-        priceTotal,
-        updatedAt: new Date().toISOString(),
-      };
-
-      await BudgetStorage.update(updatedBudget);
-
-      Alert.alert("Sucesso", "Cotação atualizada com sucesso");
-      goBack();
     } else {
-      const budgetNumber = await BudgetStorage.getLastBudgetNumber();
-      const newBudget: BudgetType = {
-        id: Crypto.randomUUID(),
-        budgetNumber: getNextBudgetNumber(budgetNumber),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        title,
-        customer,
-        status,
-        services,
-        discountPercentage,
-        discountAmount,
-        priceSubtotal,
-        priceTotal,
-      };
+      try {
+        const budgetNumber = await BudgetStorage.getLastBudgetNumber();
+        const newBudget: BudgetType = {
+          id: Crypto.randomUUID(),
+          budgetNumber: getNextBudgetNumber(budgetNumber),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          title,
+          customer,
+          status,
+          services,
+          discountPercentage,
+          discountAmount,
+          priceSubtotal,
+          priceTotal,
+        };
 
-      await BudgetStorage.add(newBudget);
+        await BudgetStorage.add(newBudget);
 
-      Alert.alert("Sucesso", "Cotação salva com sucesso");
-      goBack();
+        Alert.alert("Sucesso", "Cotação salva com sucesso");
+        goBack();
+      } catch (error) {
+        Alert.alert(
+          "Erro",
+          error instanceof Error
+            ? error.message
+            : "Não foi possível salvar o orçamento"
+        );
+        goBack();
+      }
     }
   };
 
   const loadBudgetDetails = async () => {
-    const budgetId = route.params?.budgetId;
+    try {
+      const budgetId = route.params?.budgetId;
 
-    if (!budgetId) {
-      return;
+      if (!budgetId) {
+        return;
+      }
+
+      const budgetData = await BudgetStorage.getById(budgetId);
+
+      if (!budgetData) {
+        return;
+      }
+
+      setBudgetNumber(budgetData.budgetNumber);
+      setTitle(budgetData.title);
+      setCustomer(budgetData.customer);
+      setStatus(budgetData.status);
+      setServices(budgetData.services);
+      setDiscountPercentage(budgetData.discountPercentage);
+    } catch (error) {
+      Alert.alert(
+        "Erro",
+        error instanceof Error
+          ? error.message
+          : "Não foi possível carregar os detalhes do orçamento"
+      );
+      goBack();
     }
-
-    const budgetData = await BudgetStorage.getById(budgetId);
-
-    if (!budgetData) {
-      return;
-    }
-
-    setBudgetNumber(budgetData.budgetNumber);
-    setTitle(budgetData.title);
-    setCustomer(budgetData.customer);
-    setStatus(budgetData.status);
-    setServices(budgetData.services);
-    setDiscountPercentage(budgetData.discountPercentage);
   };
 
   useEffect(() => {

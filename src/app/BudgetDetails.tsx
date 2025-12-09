@@ -41,25 +41,57 @@ export default function BudgetDetails({
   const [budgetData, setBudgetData] = useState<BudgetType | null>(null);
 
   const loadBudgetData = async (id: string) => {
-    const data = await BudgetStorage.getById(id);
-    setBudgetData(data);
+    try {
+      const data = await BudgetStorage.getById(id);
+      setBudgetData(data);
+    } catch (error) {
+      Alert.alert(
+        "Erro",
+        error instanceof Error
+          ? error.message
+          : "Não foi possível carregar os detalhes do orçamento"
+      );
+    }
   };
 
   const handleDuplicateBudget = async () => {
     if (budgetData) {
-      const budgetNextNumber = await BudgetStorage.getLastBudgetNumber();
-      const newBudgetData: BudgetType = {
-        ...budgetData,
-        id: Crypto.randomUUID(),
-        budgetNumber: getNextBudgetNumber(budgetNextNumber),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+      try {
+        const budgetNextNumber = await BudgetStorage.getLastBudgetNumber();
+        const newBudgetData: BudgetType = {
+          ...budgetData,
+          id: Crypto.randomUUID(),
+          budgetNumber: getNextBudgetNumber(budgetNextNumber),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
 
-      await BudgetStorage.add(newBudgetData);
+        await BudgetStorage.add(newBudgetData);
 
-      Alert.alert("Cotação duplicada com sucesso");
+        Alert.alert("Cotação duplicada com sucesso");
+        goBack();
+      } catch (error) {
+        Alert.alert(
+          "Erro",
+          error instanceof Error
+            ? error.message
+            : "Não foi possível duplicar o orçamento"
+        );
+      }
+    }
+  };
+
+  const removeBudget = async (id: string) => {
+    try {
+      await BudgetStorage.remove(id);
       goBack();
+    } catch (error) {
+      Alert.alert(
+        "Erro",
+        error instanceof Error
+          ? error.message
+          : "Não foi possível excluir o orçamento"
+      );
     }
   };
 
@@ -75,10 +107,7 @@ export default function BudgetDetails({
         {
           text: "Excluir",
           style: "destructive",
-          onPress: async () => {
-            await BudgetStorage.remove(id);
-            goBack();
-          },
+          onPress: () => removeBudget(budgetId),
         },
       ]
     );

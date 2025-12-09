@@ -94,9 +94,13 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
   }, [filters, storageBudgets, term]);
 
   const loadBudgets = useCallback(async () => {
-    const budgets = await BudgetStorage.get();
-    setStorageBudgets(budgets);
-    resetFilters(budgets);
+    try {
+      const budgets = await BudgetStorage.get();
+      setStorageBudgets(budgets);
+      resetFilters(budgets);
+    } catch (error) {
+      console.error("Erro ao carregar orçamentos:", error);
+    }
   }, []);
 
   useEffect(() => {
