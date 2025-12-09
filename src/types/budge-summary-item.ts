@@ -6,4 +6,5 @@ export type BudgetSummaryItem = {
   customer: string;
   price: number;
   status: BudgetStatusTypes;
+  createdAt: string;
 };

@@ -1,3 +1,4 @@
+import { SortOptions } from "@/enums/sort-options";
 import { BudgetStatusTypes } from "@/types/budget-status";
 
 export const BUDGET_STATUS_OPTIONS: Record<
@@ -28,19 +29,19 @@ export const BUDGET_SORT_OPTIONS: Record<
 > = {
   most_recent: {
     label: "Mais recente",
-    value: "most_recent",
+    value: SortOptions.MOST_RECENT,
   },
   least_recent: {
     label: "Mais antigo",
-    value: "least_recent",
+    value: SortOptions.LEAST_RECENT,
   },
   lowest_value: {
     label: "Menor valor",
-    value: "lowest_value",
+    value: SortOptions.LOWEST_VALUE,
   },
   highest_value: {
     label: "Maior valor",
-    value: "highest_value",
+    value: SortOptions.HIGHEST_VALUE,
   },
 };
 

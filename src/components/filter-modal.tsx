@@ -13,36 +13,30 @@ import { Status } from "./status";
 
 interface Props {
   isVisible: boolean;
-  selectedStatuses?: string[];
+  selectedStatuses: string[];
   selectedSortOption: string;
-  onSelectStatuses: (statuses: string[] | undefined) => void;
-  onSelectSortOption: (sortOption: string) => void;
   onToggleVisibility: () => void;
+  onApplyFilters: (statuses: string[], sortOption: string) => void;
 }
 
 export function FilterModal({
   isVisible,
   selectedStatuses,
   selectedSortOption,
-  onSelectStatuses,
-  onSelectSortOption,
   onToggleVisibility,
+  onApplyFilters,
 }: Props) {
-  const [internalSelectedStatuses, setInternalSelectedStatuses] = useState<
-    string[] | undefined
-  >(undefined);
-  const [internalSelectedSortOption, setInternalSelectedSortOption] = useState<
-    string | undefined
-  >(undefined);
+  const [internalSelectedStatuses, setInternalSelectedStatuses] =
+    useState<string[]>(selectedStatuses);
+  const [internalSelectedSortOption, setInternalSelectedSortOption] =
+    useState<string>(selectedSortOption);
 
   function handleSelectStatus(status: string) {
     if (internalSelectedStatuses?.includes(status)) {
       const updatedStatuses = internalSelectedStatuses.filter(
         (s) => s !== status
       );
-      const updatedSelectedStatuses =
-        updatedStatuses.length > 0 ? updatedStatuses : undefined;
-      setInternalSelectedStatuses(updatedSelectedStatuses);
+      setInternalSelectedStatuses(updatedStatuses);
     } else {
       setInternalSelectedStatuses((prevStatuses) => [
         ...(prevStatuses || []),
@@ -57,21 +51,18 @@ export function FilterModal({
 
   function handleResetFilters() {
     // Reseta os estados internos
-    setInternalSelectedStatuses(undefined);
+    setInternalSelectedStatuses([]);
     setInternalSelectedSortOption(BUDGET_SORT_DEFAULT_OPTION.value);
 
     // Reseta os estados externos
-    onSelectStatuses(undefined);
-    onSelectSortOption(BUDGET_SORT_DEFAULT_OPTION.value);
+    onApplyFilters([], BUDGET_SORT_DEFAULT_OPTION.value);
 
     onToggleVisibility();
   }
 
   function handleConfirmFilters() {
-    onSelectStatuses(internalSelectedStatuses);
-    onSelectSortOption(
-      internalSelectedSortOption || BUDGET_SORT_DEFAULT_OPTION.value
-    );
+    onApplyFilters(internalSelectedStatuses, internalSelectedSortOption);
+
     onToggleVisibility();
   }
 

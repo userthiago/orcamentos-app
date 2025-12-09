@@ -5,9 +5,10 @@ import { ScreenContainer } from "@/components/screen-container";
 import { ServiceBudgetCard } from "@/components/service-budget-card";
 import { TextSm, TitleLg } from "@/components/typography";
 import { BUDGET_SORT_DEFAULT_OPTION } from "@/config/budget-config";
+import { SortOptions } from "@/enums/sort-options";
 import { StackRoutesProps } from "@/routes/StackRoutes";
 import { BudgetSummaryItem } from "@/types/budge-summary-item";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 
 const MOCK_BUDGETS: BudgetSummaryItem[] = [
@@ -17,6 +18,7 @@ const MOCK_BUDGETS: BudgetSummaryItem[] = [
     customer: "Soluções Tecnológicas Beta",
     price: 22300,
     status: "approved",
+    createdAt: "2024-01-15",
   },
   {
     id: "2",
@@ -24,6 +26,7 @@ const MOCK_BUDGETS: BudgetSummaryItem[] = [
     customer: "Marketing Wizards",
     price: 4000,
     status: "draft",
+    createdAt: "2024-02-10",
   },
   {
     id: "3",
@@ -31,6 +34,7 @@ const MOCK_BUDGETS: BudgetSummaryItem[] = [
     customer: "SEO Masters",
     price: 3500,
     status: "sent",
+    createdAt: "2024-03-05",
   },
   {
     id: "4",
@@ -38,6 +42,7 @@ const MOCK_BUDGETS: BudgetSummaryItem[] = [
     customer: "Social Experts",
     price: 1800,
     status: "declined",
+    createdAt: "2024-04-20",
   },
   {
     id: "5",
@@ -45,6 +50,7 @@ const MOCK_BUDGETS: BudgetSummaryItem[] = [
     customer: "Corporate Web Solutions",
     price: 12500,
     status: "approved",
+    createdAt: "2024-05-12",
   },
   {
     id: "6",
@@ -52,6 +58,7 @@ const MOCK_BUDGETS: BudgetSummaryItem[] = [
     customer: "Ad Creators",
     price: 6000,
     status: "sent",
+    createdAt: "2024-06-18",
   },
   {
     id: "7",
@@ -59,6 +66,7 @@ const MOCK_BUDGETS: BudgetSummaryItem[] = [
     customer: "Creative Designs",
     price: 2700,
     status: "draft",
+    createdAt: "2024-07-22",
   },
   {
     id: "8",
@@ -66,6 +74,7 @@ const MOCK_BUDGETS: BudgetSummaryItem[] = [
     customer: "Enterprise Solutions",
     price: 30000,
     status: "approved",
+    createdAt: "2024-08-30",
   },
   {
     id: "9",
@@ -73,18 +82,18 @@ const MOCK_BUDGETS: BudgetSummaryItem[] = [
     customer: "Global Translations",
     price: 4500,
     status: "sent",
+    createdAt: "2024-09-14",
   },
 ];
 
 export default function Home({ navigation }: StackRoutesProps<"home">) {
+  const [budgets, setBudgets] = useState<BudgetSummaryItem[]>(MOCK_BUDGETS);
   const [isFilterModalVisible, setIsFilterModalVisible] =
     useState<boolean>(false);
-  const [selectedStatuses, setSelectedStatuses] = useState<
-    string[] | undefined
-  >(undefined);
-  const [selectedSortOption, setSelectedSortOption] = useState<string>(
-    BUDGET_SORT_DEFAULT_OPTION.value
-  );
+  const [filters, setFilters] = useState<{
+    statuses: string[];
+    sortOption: string;
+  }>({ statuses: [], sortOption: BUDGET_SORT_DEFAULT_OPTION.value });
 
   const draftAmount = MOCK_BUDGETS.filter(
     (budget) => budget.status === "draft"
@@ -93,6 +102,39 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
   const toggleFilterModal = () => {
     setIsFilterModalVisible((prev) => !prev);
   };
+
+  const applyFilters = useCallback((statuses: string[], sortOption: string) => {
+    let filteredBudgets = [...MOCK_BUDGETS];
+
+    // Filtrar por status
+    if (statuses.length > 0) {
+      filteredBudgets = filteredBudgets.filter((budget) =>
+        statuses.includes(budget.status)
+      );
+    }
+
+    // Ordenar por opção selecionada
+    if (sortOption === SortOptions.HIGHEST_VALUE) {
+      filteredBudgets.sort((a, b) => b.price - a.price);
+    } else if (sortOption === SortOptions.LOWEST_VALUE) {
+      filteredBudgets.sort((a, b) => a.price - b.price);
+    } else if (sortOption === SortOptions.MOST_RECENT) {
+      filteredBudgets.sort((a, b) => {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      });
+    } else if (sortOption === SortOptions.LEAST_RECENT) {
+      filteredBudgets.sort((a, b) => {
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      });
+    }
+
+    setFilters({ statuses, sortOption });
+    setBudgets(filteredBudgets);
+  }, []);
 
   return (
     <>
@@ -123,7 +165,7 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
             />
           </View>
           <FlatList
-            data={MOCK_BUDGETS}
+            data={budgets}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <ServiceBudgetCard
@@ -147,10 +189,9 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
       </ScreenContainer>
       <FilterModal
         isVisible={isFilterModalVisible}
-        selectedStatuses={selectedStatuses}
-        selectedSortOption={selectedSortOption}
-        onSelectStatuses={setSelectedStatuses}
-        onSelectSortOption={setSelectedSortOption}
+        selectedStatuses={filters.statuses}
+        selectedSortOption={filters.sortOption}
+        onApplyFilters={applyFilters}
         onToggleVisibility={toggleFilterModal}
       />
     </>
