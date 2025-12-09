@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import {
   Alert,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -204,140 +206,150 @@ export default function AddBudget({
   return (
     <>
       <ScreenContainer>
-        <View style={styles.header}>
-          <View style={styles.headerContent}>
-            <TouchableOpacity onPress={() => goBack()}>
-              <Icon name="chevron-left" size={24} color="#4A4A4A" />
-            </TouchableOpacity>
-            <TitleSm>
-              Orçamento{budgetNumber ? ` #${budgetNumber}` : ""}
-            </TitleSm>
-          </View>
-        </View>
-        <ScrollView
+        <KeyboardAvoidingView
           style={{ flex: 1 }}
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={0}
         >
-          <Section iconName="shop" title="Informações gerais">
-            <View style={styles.generalInformationContent}>
-              <Input
-                placeholder="Título"
-                value={title}
-                onChangeText={setTitle}
-              />
-              <Input
-                placeholder="Cliente"
-                value={customer}
-                onChangeText={setCustomer}
-              />
+          <View style={styles.header}>
+            <View style={styles.headerContent}>
+              <TouchableOpacity onPress={() => goBack()}>
+                <Icon name="chevron-left" size={24} color="#4A4A4A" />
+              </TouchableOpacity>
+              <TitleSm>
+                Orçamento{budgetNumber ? ` #${budgetNumber}` : ""}
+              </TitleSm>
             </View>
-          </Section>
-
-          <Section iconName="tag" title="Status">
-            <View style={styles.statusContent}>
-              {chunkArray(
-                Object.values(BUDGET_STATUS_OPTIONS).map(
-                  (option) => option.value
-                ),
-                2
-              ).map((statusColumn, columnIndex) => (
-                <View key={columnIndex} style={styles.statusColumn}>
-                  {statusColumn.map((statusItem) => (
-                    <Check
-                      key={statusItem}
-                      type="radio"
-                      isChecked={statusItem === status}
-                      label={<Status type={statusItem} />}
-                      onToggle={() => setStatus(statusItem)}
-                    />
-                  ))}
-                </View>
-              ))}
-            </View>
-          </Section>
-
-          <Section iconName="note-with-text" title="Serviços inclusos">
-            <View style={styles.includeServicesContainer}>
-              {services.map((service) => (
-                <ServiceItem
-                  key={service.id}
-                  title={service.title}
-                  description={service.description}
-                  price={service.price}
-                  quantity={service.quantity}
-                  titleNumberOfLines={1}
-                  descriptionNumberOfLines={1}
-                  onEditPress={() => handleSelectServiceToEdit(service)}
-                />
-              ))}
-              <Button
-                iconName="plus"
-                text="Adicionar serviço"
-                variant="secondary"
-                onPress={() => handleToggleAddServiceModal()}
-              />
-            </View>
-          </Section>
-
-          <Section
-            iconName="credit-card"
-            title="Investimento"
-            hideContentPadding
+          </View>
+          <ScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={styles.content}
+            showsVerticalScrollIndicator={false}
           >
-            <View style={styles.investimentContent}>
-              <View style={styles.investimentContentRow}>
-                <TextSm>Subtotal</TextSm>
-                <View style={[styles.investimentContentRowGroup, { gap: 12 }]}>
-                  <TextXs>
-                    {services.length} item{services.length !== 1 ? "s" : ""}
-                  </TextXs>
-                  <CurrencyValue value={priceSubtotal} size="small" />
-                </View>
+            <Section iconName="shop" title="Informações gerais">
+              <View style={styles.generalInformationContent}>
+                <Input
+                  placeholder="Título"
+                  value={title}
+                  onChangeText={setTitle}
+                />
+                <Input
+                  placeholder="Cliente"
+                  value={customer}
+                  onChangeText={setCustomer}
+                />
               </View>
-              <View style={styles.investimentContentRow}>
-                <View style={[styles.investimentContentRowGroup, { gap: 8 }]}>
-                  <TextSm>Desconto</TextSm>
-                  <InputPercentage
-                    placeholder="0"
-                    value={String(discountPercentage)}
-                    onChangeText={(text) => setDiscountPercentage(Number(text))}
+            </Section>
+
+            <Section iconName="tag" title="Status">
+              <View style={styles.statusContent}>
+                {chunkArray(
+                  Object.values(BUDGET_STATUS_OPTIONS).map(
+                    (option) => option.value
+                  ),
+                  2
+                ).map((statusColumn, columnIndex) => (
+                  <View key={columnIndex} style={styles.statusColumn}>
+                    {statusColumn.map((statusItem) => (
+                      <Check
+                        key={statusItem}
+                        type="radio"
+                        isChecked={statusItem === status}
+                        label={<Status type={statusItem} />}
+                        onToggle={() => setStatus(statusItem)}
+                      />
+                    ))}
+                  </View>
+                ))}
+              </View>
+            </Section>
+
+            <Section iconName="note-with-text" title="Serviços inclusos">
+              <View style={styles.includeServicesContainer}>
+                {services.map((service) => (
+                  <ServiceItem
+                    key={service.id}
+                    title={service.title}
+                    description={service.description}
+                    price={service.price}
+                    quantity={service.quantity}
+                    titleNumberOfLines={1}
+                    descriptionNumberOfLines={1}
+                    onEditPress={() => handleSelectServiceToEdit(service)}
                   />
-                </View>
-                {discountAmount > 0 && (
-                  <TextSm style={{ color: "#DB4D4D" }}>
-                    - {formatCurrency(discountAmount)}
-                  </TextSm>
-                )}
+                ))}
+                <Button
+                  iconName="plus"
+                  text="Adicionar serviço"
+                  variant="secondary"
+                  onPress={() => handleToggleAddServiceModal()}
+                />
               </View>
-            </View>
-            <View style={styles.investimentFooter}>
-              <TitleSm>Valor total</TitleSm>
-              <View style={styles.investimentFooterValueContainer}>
-                {priceSubtotal !== priceTotal && (
-                  <TextXs
-                    style={{
-                      color: "#4A4A4A",
-                      textDecorationColor: "#4A4A4A",
-                      textDecorationLine: "line-through",
-                    }}
+            </Section>
+
+            <Section
+              iconName="credit-card"
+              title="Investimento"
+              hideContentPadding
+            >
+              <View style={styles.investimentContent}>
+                <View style={styles.investimentContentRow}>
+                  <TextSm>Subtotal</TextSm>
+                  <View
+                    style={[styles.investimentContentRowGroup, { gap: 12 }]}
                   >
-                    {formatCurrency(priceSubtotal)}
-                  </TextXs>
-                )}
-                <CurrencyValue value={priceTotal} strong size="large" />
+                    <TextXs>
+                      {services.length} item{services.length !== 1 ? "s" : ""}
+                    </TextXs>
+                    <CurrencyValue value={priceSubtotal} size="small" />
+                  </View>
+                </View>
+                <View style={styles.investimentContentRow}>
+                  <View style={[styles.investimentContentRowGroup, { gap: 8 }]}>
+                    <TextSm>Desconto</TextSm>
+                    <InputPercentage
+                      placeholder="0"
+                      value={String(discountPercentage)}
+                      onChangeText={(text) =>
+                        setDiscountPercentage(Number(text))
+                      }
+                    />
+                  </View>
+                  {discountAmount > 0 && (
+                    <TextSm style={{ color: "#DB4D4D" }}>
+                      - {formatCurrency(discountAmount)}
+                    </TextSm>
+                  )}
+                </View>
               </View>
-            </View>
-          </Section>
-        </ScrollView>
-        <View style={styles.footer}>
-          <Button
-            text="Cancelar"
-            variant="secondary"
-            onPress={() => goBack()}
-          />
-          <Button text="Salvar" iconName="check" onPress={handleSaveBudget} />
-        </View>
+              <View style={styles.investimentFooter}>
+                <TitleSm>Valor total</TitleSm>
+                <View style={styles.investimentFooterValueContainer}>
+                  {priceSubtotal !== priceTotal && (
+                    <TextXs
+                      style={{
+                        color: "#4A4A4A",
+                        textDecorationColor: "#4A4A4A",
+                        textDecorationLine: "line-through",
+                      }}
+                    >
+                      {formatCurrency(priceSubtotal)}
+                    </TextXs>
+                  )}
+                  <CurrencyValue value={priceTotal} strong size="large" />
+                </View>
+              </View>
+            </Section>
+          </ScrollView>
+          <View style={styles.footer}>
+            <Button
+              text="Cancelar"
+              variant="secondary"
+              onPress={() => goBack()}
+            />
+            <Button text="Salvar" iconName="check" onPress={handleSaveBudget} />
+          </View>
+        </KeyboardAvoidingView>
       </ScreenContainer>
       <AddServiceModal
         isVisible={isAddServiceModalVisible}

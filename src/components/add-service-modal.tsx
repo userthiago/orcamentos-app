@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Crypto from "expo-crypto";
 
 import { ServiceType } from "@/types/service-type";
@@ -26,6 +34,7 @@ export function AddServiceModal({
   onRemoveService,
   onToggleVisibility,
 }: Props) {
+  const insets = useSafeAreaInsets();
   const [id, setId] = useState<string | undefined>(undefined);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -81,55 +90,69 @@ export function AddServiceModal({
       transparent
       statusBarTranslucent
     >
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <TitleSm>Serviço</TitleSm>
-          <TouchableOpacity onPress={onToggleVisibility}>
-            <Icon name="multiply" size={24} color="#4A4A4A" />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.content}>
-          <Input
-            placeholder="Título do serviço"
-            value={title}
-            onChangeText={setTitle}
-          />
-          <Input
-            placeholder="Descrição do serviço"
-            type="textfield"
-            value={description}
-            onChangeText={setDescription}
-          />
-          <View style={styles.inputGroupRow}>
-            <CurrencyInput
-              flex
-              value={price ?? null}
-              placeholder="0,00"
-              onChangeValue={(text) => setPrice(text)}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboardAvoid}
+      >
+        <View style={[styles.container]}>
+          <View style={styles.header}>
+            <TitleSm>Serviço</TitleSm>
+            <TouchableOpacity onPress={onToggleVisibility}>
+              <Icon name="multiply" size={24} color="#4A4A4A" />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.content}>
+            <Input
+              placeholder="Título do serviço"
+              value={title}
+              onChangeText={setTitle}
             />
-            <QuantityInput
-              value={quantity}
-              onChangeQuantity={setQuantity}
-              maxLength={4}
+            <Input
+              placeholder="Descrição do serviço"
+              type="textfield"
+              value={description}
+              onChangeText={setDescription}
+            />
+            <View style={styles.inputGroupRow}>
+              <CurrencyInput
+                flex
+                value={price ?? null}
+                placeholder="0,00"
+                onChangeValue={(text) => setPrice(text)}
+              />
+              <QuantityInput
+                value={quantity}
+                onChangeQuantity={setQuantity}
+                maxLength={4}
+              />
+            </View>
+          </View>
+          <View style={styles.footer}>
+            <Button
+              iconName="trash-2"
+              variant="danger"
+              onPress={handleCancel}
+            />
+            <Button
+              text="Salvar"
+              iconName="check"
+              onPress={handleSaveService}
+              disabled={!title || !description || !price || !quantity}
             />
           </View>
         </View>
-        <View style={styles.footer}>
-          <Button iconName="trash-2" variant="danger" onPress={handleCancel} />
-          <Button
-            text="Salvar"
-            iconName="check"
-            onPress={handleSaveService}
-            disabled={!title || !description || !price || !quantity}
-          />
-        </View>
-      </View>
+      </KeyboardAvoidingView>
       <TouchableOpacity style={styles.backdrop} onPress={onToggleVisibility} />
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
+  keyboardAvoid: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+  },
   backdrop: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -140,8 +163,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderTopRightRadius: 16,
     borderTopLeftRadius: 16,
-    bottom: 0,
-    position: "absolute",
     width: "100%",
   },
   header: {
