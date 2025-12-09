@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 
 import { useFocusEffect } from "@react-navigation/native";
@@ -46,47 +46,53 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
     [storageBudgets]
   );
 
-  const applyFilters = useCallback(
-    async (statuses: string[], sortOption: string) => {
-      let filteredBudgets = [...storageBudgets];
+  const setFiltersOptions = (statuses: string[], sortOption: string) => {
+    setFilters({ statuses, sortOption });
+  };
 
-      // Filtrar por status
-      if (statuses.length > 0) {
-        filteredBudgets = filteredBudgets.filter((budget) =>
-          statuses.includes(budget.status)
+  const applyFilters = useCallback(async () => {
+    console.log("rodei");
+    const { statuses, sortOption } = filters;
+    let filteredBudgets = [...storageBudgets];
+
+    // Filtrar por status
+    if (statuses.length > 0) {
+      filteredBudgets = filteredBudgets.filter((budget) =>
+        statuses.includes(budget.status)
+      );
+    }
+
+    // Ordenar por opção selecionada
+    if (sortOption === SortOptions.HIGHEST_VALUE) {
+      filteredBudgets.sort((a, b) => b.priceTotal - a.priceTotal);
+    } else if (sortOption === SortOptions.LOWEST_VALUE) {
+      filteredBudgets.sort((a, b) => a.priceTotal - b.priceTotal);
+    } else if (sortOption === SortOptions.MOST_RECENT) {
+      filteredBudgets.sort((a, b) => {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
-      }
+      });
+    } else if (sortOption === SortOptions.LEAST_RECENT) {
+      filteredBudgets.sort((a, b) => {
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      });
+    }
 
-      // Ordenar por opção selecionada
-      if (sortOption === SortOptions.HIGHEST_VALUE) {
-        filteredBudgets.sort((a, b) => b.priceTotal - a.priceTotal);
-      } else if (sortOption === SortOptions.LOWEST_VALUE) {
-        filteredBudgets.sort((a, b) => a.priceTotal - b.priceTotal);
-      } else if (sortOption === SortOptions.MOST_RECENT) {
-        filteredBudgets.sort((a, b) => {
-          return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-        });
-      } else if (sortOption === SortOptions.LEAST_RECENT) {
-        filteredBudgets.sort((a, b) => {
-          return (
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          );
-        });
-      }
-
-      setFilters({ statuses, sortOption });
-      setBudgets(filteredBudgets);
-    },
-    []
-  );
+    setBudgets(filteredBudgets);
+  }, [filters, storageBudgets]);
 
   const loadBudgets = useCallback(async () => {
     const budgets = await BudgetStorage.get();
     setStorageBudgets(budgets);
     resetFilters(budgets);
   }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [applyFilters]);
 
   useFocusEffect(
     useCallback(() => {
@@ -154,7 +160,7 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
         isVisible={isFilterModalVisible}
         selectedStatuses={filters.statuses}
         selectedSortOption={filters.sortOption}
-        onApplyFilters={applyFilters}
+        onApplyFilters={setFiltersOptions}
         onToggleVisibility={toggleFilterModal}
       />
     </>
