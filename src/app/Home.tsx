@@ -51,7 +51,6 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
   };
 
   const applyFilters = useCallback(async () => {
-    console.log("rodei");
     const { statuses, sortOption } = filters;
     let filteredBudgets = [...storageBudgets];
 

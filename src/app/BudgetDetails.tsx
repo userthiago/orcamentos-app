@@ -186,17 +186,18 @@ export default function BudgetDetails({
                   }
                 />
               </View>
-              <TitleXs
-                style={[
-                  styles.budgetTotalLabel,
-                  {
-                    color:
-                      budgetData.discountAmount > 0 ? "#30752F" : "#4A4A4A",
-                  },
-                ]}
-              >
-                - {formatCurrency(budgetData.discountAmount)}
-              </TitleXs>
+              {budgetData.discountAmount > 0 && (
+                <TitleXs
+                  style={[
+                    styles.budgetTotalLabel,
+                    {
+                      color: "#30752F",
+                    },
+                  ]}
+                >
+                  - {formatCurrency(budgetData.discountAmount)}
+                </TitleXs>
+              )}
             </View>
             <View style={styles.divisor} />
             <View style={styles.budgetTotalRow}>

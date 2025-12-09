@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -34,9 +34,11 @@ import { getNextBudgetNumber } from "@/utils/budget-utils";
 
 export default function AddBudget({
   navigation,
+  route,
 }: StackRoutesProps<"addBudget">) {
   const { goBack } = navigation;
 
+  const [budgetNumber, setBudgetNumber] = useState("");
   const [title, setTitle] = useState("");
   const [customer, setCustomer] = useState("");
   const [status, setStatus] = useState<BudgetStatusTypes>(
@@ -92,27 +94,82 @@ export default function AddBudget({
   };
 
   const handleSaveBudget = async () => {
-    const budgetNumber = await BudgetStorage.getLastBudgetNumber();
-    const newBudget: BudgetType = {
-      id: Crypto.randomUUID(),
-      budgetNumber: getNextBudgetNumber(budgetNumber),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      title,
-      customer,
-      status,
-      services,
-      discountPercentage,
-      discountAmount,
-      priceSubtotal,
-      priceTotal,
-    };
+    const budgetId = route.params?.budgetId;
 
-    await BudgetStorage.add(newBudget);
+    if (budgetId) {
+      const existingBudget = await BudgetStorage.getById(budgetId);
 
-    Alert.alert("Sucesso", "Cotação salva com sucesso");
-    goBack();
+      if (!existingBudget) {
+        Alert.alert("Erro", "Orçamento não encontrado para atualização");
+        goBack();
+        return;
+      }
+
+      const updatedBudget: BudgetType = {
+        ...existingBudget,
+        title,
+        customer,
+        status,
+        services,
+        discountPercentage,
+        discountAmount,
+        priceSubtotal,
+        priceTotal,
+        updatedAt: new Date().toISOString(),
+      };
+
+      await BudgetStorage.update(updatedBudget);
+
+      Alert.alert("Sucesso", "Cotação atualizada com sucesso");
+      goBack();
+    } else {
+      const budgetNumber = await BudgetStorage.getLastBudgetNumber();
+      const newBudget: BudgetType = {
+        id: Crypto.randomUUID(),
+        budgetNumber: getNextBudgetNumber(budgetNumber),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        title,
+        customer,
+        status,
+        services,
+        discountPercentage,
+        discountAmount,
+        priceSubtotal,
+        priceTotal,
+      };
+
+      await BudgetStorage.add(newBudget);
+
+      Alert.alert("Sucesso", "Cotação salva com sucesso");
+      goBack();
+    }
   };
+
+  const loadBudgetDetails = async () => {
+    const budgetId = route.params?.budgetId;
+
+    if (!budgetId) {
+      return;
+    }
+
+    const budgetData = await BudgetStorage.getById(budgetId);
+
+    if (!budgetData) {
+      return;
+    }
+
+    setBudgetNumber(budgetData.budgetNumber);
+    setTitle(budgetData.title);
+    setCustomer(budgetData.customer);
+    setStatus(budgetData.status);
+    setServices(budgetData.services);
+    setDiscountPercentage(budgetData.discountPercentage);
+  };
+
+  useEffect(() => {
+    loadBudgetDetails();
+  }, []);
 
   return (
     <>
@@ -122,7 +179,9 @@ export default function AddBudget({
             <TouchableOpacity onPress={() => goBack()}>
               <Icon name="chevron-left" size={24} color="#4A4A4A" />
             </TouchableOpacity>
-            <TitleSm>Orçamento</TitleSm>
+            <TitleSm>
+              Orçamento{budgetNumber ? ` #${budgetNumber}` : ""}
+            </TitleSm>
           </View>
         </View>
         <ScrollView
