@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import * as Crypto from "expo-crypto";
 
 import { StackRoutesProps } from "@/routes/StackRoutes";
 import { BUDGET_STATUS_OPTIONS } from "@/consts/budget-consts";
@@ -21,6 +28,9 @@ import { AddServiceModal } from "@/components/add-service-modal";
 import { InputPercentage } from "@/components/input-percentage";
 import { ScreenContainer } from "@/components/screen-container";
 import { TextSm, TextXs, TitleSm } from "@/components/typography";
+import { BudgetType } from "@/types/budget-type";
+import { BudgetStorage } from "@/storage/budget-storage";
+import { getNextBudgetNumber } from "@/utils/budget-utils";
 
 export default function AddBudget({
   navigation,
@@ -79,6 +89,29 @@ export default function AddBudget({
     setServices((prevServices) =>
       prevServices.filter((service) => service.id !== id)
     );
+  };
+
+  const handleSaveBudget = async () => {
+    const budgetNumber = await BudgetStorage.getLastBudgetNumber();
+    const newBudget: BudgetType = {
+      id: Crypto.randomUUID(),
+      budgetNumber: getNextBudgetNumber(budgetNumber),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      title,
+      customer,
+      status,
+      services,
+      discountPercentage,
+      discountAmount,
+      priceSubtotal,
+      priceTotal,
+    };
+
+    await BudgetStorage.add(newBudget);
+
+    Alert.alert("Sucesso", "Cotação salva com sucesso");
+    goBack();
   };
 
   return (
@@ -182,11 +215,11 @@ export default function AddBudget({
                     onChangeText={(text) => setDiscountPercentage(Number(text))}
                   />
                 </View>
-                <TextSm
-                  style={{ color: discountAmount > 0 ? "#DB4D4D" : "#4A4A4A" }}
-                >
-                  - {formatCurrency(discountAmount)}
-                </TextSm>
+                {discountAmount > 0 && (
+                  <TextSm style={{ color: "#DB4D4D" }}>
+                    - {formatCurrency(discountAmount)}
+                  </TextSm>
+                )}
               </View>
             </View>
             <View style={styles.investimentFooter}>
@@ -215,7 +248,7 @@ export default function AddBudget({
             variant="secondary"
             onPress={() => goBack()}
           />
-          <Button text="Salvar" iconName="check" onPress={() => {}} />
+          <Button text="Salvar" iconName="check" onPress={handleSaveBudget} />
         </View>
       </ScreenContainer>
       <AddServiceModal

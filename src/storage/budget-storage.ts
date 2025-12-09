@@ -22,6 +22,21 @@ async function getById(id: string): Promise<BudgetType | null> {
   }
 }
 
+async function getLastBudgetNumber(): Promise<string> {
+  try {
+    const budgets = await get();
+    if (budgets.length === 0) {
+      return "00000";
+    }
+    const lastBudget = budgets.reduce((prev, current) =>
+      Number(prev.budgetNumber) > Number(current.budgetNumber) ? prev : current
+    );
+    return lastBudget.budgetNumber;
+  } catch (error) {
+    throw new Error("GET_LAST_BUDGET_NUMBER: " + error);
+  }
+}
+
 async function save(budgets: BudgetType[]): Promise<void> {
   try {
     await AsyncStorage.setItem(BUDGET_STORAGE_KEY, JSON.stringify(budgets));
@@ -54,6 +69,17 @@ async function update(budget: BudgetType): Promise<BudgetType[]> {
   }
 }
 
+async function remove(id: string): Promise<BudgetType[]> {
+  try {
+    const budgets = await get();
+    const updatedBudgets = budgets.filter((b) => b.id !== id);
+    await save(updatedBudgets);
+    return updatedBudgets;
+  } catch (error) {
+    throw new Error("REMOVE_BUDGET: " + error);
+  }
+}
+
 async function clear(): Promise<void> {
   try {
     await AsyncStorage.removeItem(BUDGET_STORAGE_KEY);
@@ -65,8 +91,10 @@ async function clear(): Promise<void> {
 export const BudgetStorage = {
   get,
   getById,
+  getLastBudgetNumber,
   save,
   add,
   update,
+  remove,
   clear,
 };
