@@ -9,6 +9,7 @@ import { Input } from "./input";
 import { Button } from "./button";
 import { TitleSm } from "./typography";
 import { QuantityInput } from "./quantity-input";
+import { CurrencyInput } from "./currency-input";
 
 interface Props {
   isVisible: boolean;
@@ -28,14 +29,14 @@ export function AddServiceModal({
   const [id, setId] = useState<string | undefined>(undefined);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [price, setPrice] = useState<number | undefined>(undefined);
+  const [price, setPrice] = useState<number | null>(null);
   const [quantity, setQuantity] = useState<number | undefined>(undefined);
 
   const resetFields = () => {
     setId(undefined);
     setTitle("");
     setDescription("");
-    setPrice(undefined);
+    setPrice(null);
     setQuantity(undefined);
   };
 
@@ -69,7 +70,7 @@ export function AddServiceModal({
     setId(editData?.id);
     setTitle(editData?.title || "");
     setDescription(editData?.description || "");
-    setPrice(editData?.price);
+    setPrice(editData?.price ?? null);
     setQuantity(editData?.quantity);
   }, [editData]);
 
@@ -100,12 +101,11 @@ export function AddServiceModal({
             onChangeText={setDescription}
           />
           <View style={styles.inputGroupRow}>
-            <Input
-              type="currency"
-              placeholder="0,00"
+            <CurrencyInput
               flex
-              value={String(price ?? "")}
-              onChangeText={(text) => setPrice(Number(text))}
+              value={price ?? null}
+              placeholder="0,00"
+              onChangeValue={(text) => setPrice(text)}
             />
             <QuantityInput
               value={quantity}

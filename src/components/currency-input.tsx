@@ -1,14 +1,16 @@
 import { useMemo, useState } from "react";
 import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
-import { Icon } from "./icon";
+import { TitleMd } from "./typography";
+import RNCurrencyInput, {
+  CurrencyInputProps,
+} from "react-native-currency-input";
 
-interface Props extends TextInputProps {
+interface Props extends CurrencyInputProps {
   isInvalid?: boolean;
-  type?: "search" | "textfield";
   flex?: boolean;
 }
 
-export function Input({ type, isInvalid, flex, ...rest }: Props) {
+export function CurrencyInput({ isInvalid, flex, ...rest }: Props) {
   const [isFocused, setIsFocused] = useState(false);
 
   const iconBorderColors = useMemo(() => {
@@ -33,21 +35,24 @@ export function Input({ type, isInvalid, flex, ...rest }: Props) {
       style={[
         styles.container,
         { borderColor: iconBorderColors.border },
-        type === "textfield" && styles.textfieldContainer,
         flex && { flex: 1 },
       ]}
     >
-      {type === "search" && (
-        <Icon name="search" size={20} color={iconBorderColors.icon} />
-      )}
-      <TextInput
+      <TitleMd
+        style={[
+          {
+            color: iconBorderColors.icon,
+          },
+        ]}
+      >
+        R$
+      </TitleMd>
+      <RNCurrencyInput
+        style={[styles.input]}
         placeholderTextColor="#676767"
         cursorColor="#6A46EB"
-        style={[styles.input, type === "textfield" && styles.textfield]}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        keyboardType="default"
-        multiline={type === "textfield"}
         {...rest}
       />
     </View>
@@ -66,17 +71,10 @@ const styles = StyleSheet.create({
     borderColor: "#E6E5E5",
     borderRadius: 999,
   },
-  textfieldContainer: {
-    height: 120,
-    borderRadius: 20,
-  },
   input: {
     flex: 1,
     fontSize: 16,
     fontFamily: "Lato_400Regular",
     color: "#0F0F0F",
-  },
-  textfield: {
-    height: 96,
   },
 });
