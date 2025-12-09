@@ -2,7 +2,7 @@ import { StyleSheet, ViewProps } from "react-native";
 
 import { Tag } from "./tag";
 
-import { BUDGET_STATUS_OPTIONS } from "@/config/budget-config";
+import { BUDGET_STATUS_OPTIONS } from "@/consts/budget-consts";
 import { BudgetStatusTypes } from "@/types/budget-status-types";
 
 interface Props extends ViewProps {

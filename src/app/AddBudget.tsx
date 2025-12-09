@@ -2,10 +2,8 @@ import { useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { StackRoutesProps } from "@/routes/StackRoutes";
-import {
-  BUDGET_STATUS_DEFAULT_OPTION,
-  BUDGET_STATUS_OPTIONS,
-} from "@/config/budget-config";
+import { BUDGET_STATUS_OPTIONS } from "@/consts/budget-consts";
+import { BUDGET_STATUS_DEFAULT_OPTION } from "@/config/budget-config";
 import { chunkArray } from "@/utils/array-utils";
 import { formatCurrency } from "@/utils/currency-utils";
 import { ServiceType } from "@/types/service-type";

@@ -8,10 +8,10 @@ import { Status } from "./status";
 import { TextSm, TitleSm } from "./typography";
 
 import {
-  BUDGET_SORT_DEFAULT_OPTION,
   BUDGET_SORT_OPTIONS,
   BUDGET_STATUS_OPTIONS,
-} from "@/config/budget-config";
+} from "@/consts/budget-consts";
+import { BUDGET_SORT_DEFAULT_OPTION } from "@/config/budget-config";
 
 interface Props {
   isVisible: boolean;

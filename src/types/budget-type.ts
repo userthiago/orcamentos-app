@@ -3,6 +3,7 @@ import { ServiceType } from "./service-type";
 
 export type BudgetType = {
   id: string;
+  budgetNumber: string;
   createdAt: string;
   title: string;
   customer: string;
