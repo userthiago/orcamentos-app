@@ -1,9 +1,13 @@
 import { useCallback, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 
+import { useFocusEffect } from "@react-navigation/native";
+
 import { StackRoutesProps } from "@/routes/StackRoutes";
 import { BUDGET_SORT_DEFAULT_OPTION } from "@/config/budget-config";
 import { SortOptions } from "@/enums/sort-options";
+import { BudgetType } from "@/types/budget-type";
+import { BudgetStorage } from "@/storage/budget-storage";
 
 import { Input } from "@/components/input";
 import { Button } from "@/components/button";
@@ -11,10 +15,7 @@ import { FilterModal } from "@/components/filter-modal";
 import { TextSm, TitleLg } from "@/components/typography";
 import { ScreenContainer } from "@/components/screen-container";
 import { ServiceBudgetCard } from "@/components/service-budget-card";
-import { useFocusEffect } from "@react-navigation/native";
-import { BudgetStorage } from "@/storage/budget-storage";
 import { EmptyBudgetList } from "@/components/empty-budget-list";
-import { BudgetType } from "@/types/budget-type";
 
 export default function Home({ navigation }: StackRoutesProps<"home">) {
   const [storageBudgets, setStorageBudgets] = useState<BudgetType[]>([]);
@@ -58,9 +59,9 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
 
       // Ordenar por opção selecionada
       if (sortOption === SortOptions.HIGHEST_VALUE) {
-        filteredBudgets.sort((a, b) => b.price - a.price);
+        filteredBudgets.sort((a, b) => b.priceTotal - a.priceTotal);
       } else if (sortOption === SortOptions.LOWEST_VALUE) {
-        filteredBudgets.sort((a, b) => a.price - b.price);
+        filteredBudgets.sort((a, b) => a.priceTotal - b.priceTotal);
       } else if (sortOption === SortOptions.MOST_RECENT) {
         filteredBudgets.sort((a, b) => {
           return (
@@ -129,7 +130,7 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
                 status={item.status}
                 title={item.title}
                 customer={item.customer}
-                price={item.price}
+                price={item.priceTotal}
                 onPress={() =>
                   navigation.navigate("budgetDetails", { budgetId: item.id })
                 }

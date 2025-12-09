@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { StackRoutesProps } from "@/routes/StackRoutes";
 import { formatCurrency } from "@/utils/currency-utils";
-import { BudgetStatusTypes } from "@/types/budget-status-types";
+import { BudgetType } from "@/types/budget-type";
+import { BudgetStorage } from "@/storage/budget-storage";
 
 import {
   TextSm,
@@ -22,44 +24,28 @@ import { ServiceItem } from "@/components/service-item";
 import { CurrencyValue } from "@/components/currency-value";
 import { ScreenContainer } from "@/components/screen-container";
 
-const MOCK_SERVICES = [
-  {
-    id: "1",
-    title: "Desenvolvimento de website",
-    description: "Criação de um website responsivo e moderno",
-    price: 5000,
-    quantity: 1,
-  },
-  {
-    id: "2",
-    title: "Design de logo",
-    description: "Criação de uma identidade visual única",
-    price: 1200,
-    quantity: 1,
-  },
-  {
-    id: "3",
-    title: "Manutenção mensal",
-    description: "Atualizações e suporte contínuo",
-    price: 300,
-    quantity: 12,
-  },
-  {
-    id: "4",
-    title: "Consultoria em marketing digital",
-    description: "Estratégias para aumentar a presença online",
-    price: 2000,
-    quantity: 1,
-  },
-];
-
 export default function BudgetDetails({
   navigation,
+  route,
 }: StackRoutesProps<"budgetDetails">) {
   const { navigate, goBack } = navigation;
-  const id = "12345";
-  const [selectedStatus, setSelectedStatus] =
-    useState<BudgetStatusTypes>("draft");
+  const { budgetId } = route.params;
+  const [budgetData, setBudgetData] = useState<BudgetType | null>(null);
+
+  const loadBudgetData = async (id: string) => {
+    const data = await BudgetStorage.getById(id);
+    setBudgetData(data);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      loadBudgetData(budgetId);
+    }, [budgetId])
+  );
+
+  if (budgetData === null) {
+    return null;
+  }
 
   return (
     <ScreenContainer>
@@ -68,7 +54,7 @@ export default function BudgetDetails({
           <TouchableOpacity onPress={() => goBack()}>
             <Icon name="chevron-left" size={24} color="#4A4A4A" />
           </TouchableOpacity>
-          <TitleSm>Orçamento #{id}</TitleSm>
+          <TitleSm>Orçamento #{budgetData.budgetNumber}</TitleSm>
         </View>
         <Status type="sent" />
       </View>
@@ -80,9 +66,7 @@ export default function BudgetDetails({
         <View style={styles.sectionContainer}>
           <View style={[styles.customerTitleContainer, styles.sectionPadding]}>
             <IconTag name="shop" />
-            <TitleLg style={{ flex: 1 }}>
-              Desenvolvimento de aplicativo de loja online
-            </TitleLg>
+            <TitleLg style={{ flex: 1 }}>{budgetData.title}</TitleLg>
           </View>
           <View
             style={[styles.customerDescriptionContainer, styles.sectionPadding]}
@@ -90,7 +74,7 @@ export default function BudgetDetails({
             <View style={styles.customerDescriptionItem}>
               <TextXs style={styles.customerDescriptionTitle}>Cliente</TextXs>
               <TextSm style={styles.customerDescriptionValue}>
-                Soluções Tecnológicas Beta
+                {budgetData.customer}
               </TextSm>
             </View>
             <View style={styles.customerDescriptionRow}>
@@ -99,7 +83,7 @@ export default function BudgetDetails({
                   Criado em
                 </TextXs>
                 <TextSm style={styles.customerDescriptionValue}>
-                  22/08/2024
+                  {budgetData.createdAt}
                 </TextSm>
               </View>
               <View style={styles.customerDescriptionItem}>
@@ -107,7 +91,7 @@ export default function BudgetDetails({
                   Atualizado em
                 </TextXs>
                 <TextSm style={styles.customerDescriptionValue}>
-                  25/08/2024
+                  {budgetData.updatedAt}
                 </TextSm>
               </View>
             </View>
@@ -116,7 +100,7 @@ export default function BudgetDetails({
 
         <Section iconName="note-with-text" title="Serviços inclusos">
           <View style={styles.includeServicesContainer}>
-            {MOCK_SERVICES.map((service) => (
+            {budgetData.services.map((service) => (
               <ServiceItem
                 key={service.id}
                 title={service.title}
@@ -142,16 +126,29 @@ export default function BudgetDetails({
             <View style={styles.budgetTotalRow}>
               <TextSm style={styles.budgetTotalLabel}>Subtotal</TextSm>
               <TitleXs style={styles.budgetTotalLabel}>
-                {formatCurrency(4050)}
+                {formatCurrency(budgetData.priceSubtotal)}
               </TitleXs>
             </View>
             <View style={styles.budgetTotalRow}>
               <View style={styles.budgetTotalRowGroup}>
                 <TextSm style={styles.budgetTotalLabel}>Desconto</TextSm>
-                <Tag text="5% off" variant="approved" />
+                <Tag
+                  text={`${budgetData.discountPercentage}% off`}
+                  variant={
+                    budgetData.discountPercentage > 0 ? "approved" : "draft"
+                  }
+                />
               </View>
-              <TitleXs style={[styles.budgetTotalLabel, { color: "#30752F" }]}>
-                - {formatCurrency(200)}
+              <TitleXs
+                style={[
+                  styles.budgetTotalLabel,
+                  {
+                    color:
+                      budgetData.discountAmount > 0 ? "#30752F" : "#4A4A4A",
+                  },
+                ]}
+              >
+                - {formatCurrency(budgetData.discountAmount)}
               </TitleXs>
             </View>
             <View style={styles.divisor} />
@@ -159,7 +156,11 @@ export default function BudgetDetails({
               <TitleSm style={styles.budgetTotalLabel}>
                 Investimento total
               </TitleSm>
-              <CurrencyValue value={3850} strong size="large" />
+              <CurrencyValue
+                value={budgetData.priceTotal}
+                strong
+                size="large"
+              />
             </View>
           </View>
         </View>
@@ -180,7 +181,7 @@ export default function BudgetDetails({
           <Button
             variant="secondary"
             iconName="edit-pen"
-            onPress={() => navigate("addBudget", { budgetId: id })}
+            onPress={() => navigate("addBudget", { budgetId: budgetData.id })}
           />
         </View>
         <Button

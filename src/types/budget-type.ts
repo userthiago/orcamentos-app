@@ -5,11 +5,13 @@ export type BudgetType = {
   id: string;
   budgetNumber: string;
   createdAt: string;
+  updatedAt: string;
   title: string;
   customer: string;
   status: BudgetStatusTypes;
   services: ServiceType[];
-  discount: number;
-  price: number;
-  priceWithDiscount: number;
+  discountPercentage: number;
+  discountAmount: number;
+  priceSubtotal: number;
+  priceTotal: number;
 };
