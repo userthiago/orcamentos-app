@@ -19,6 +19,7 @@ import { EmptyBudgetList } from "@/components/empty-budget-list";
 
 export default function Home({ navigation }: StackRoutesProps<"home">) {
   const [storageBudgets, setStorageBudgets] = useState<BudgetType[]>([]);
+  const [term, setTerm] = useState<string>("");
   const [budgets, setBudgets] = useState<BudgetType[]>([]);
   const [isFilterModalVisible, setIsFilterModalVisible] =
     useState<boolean>(false);
@@ -80,8 +81,17 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
       });
     }
 
+    // Filtrar pelo termo de busca
+    if (term.trim() !== "") {
+      filteredBudgets = filteredBudgets.filter(
+        (budget) =>
+          budget.title.toLowerCase().includes(term.toLowerCase()) ||
+          budget.customer.toLowerCase().includes(term.toLowerCase())
+      );
+    }
+
     setBudgets(filteredBudgets);
-  }, [filters, storageBudgets]);
+  }, [filters, storageBudgets, term]);
 
   const loadBudgets = useCallback(async () => {
     const budgets = await BudgetStorage.get();
@@ -120,7 +130,13 @@ export default function Home({ navigation }: StackRoutesProps<"home">) {
         </View>
         <View style={styles.content}>
           <View style={styles.searchContainer}>
-            <Input type="search" placeholder="Título ou cliente" flex />
+            <Input
+              type="search"
+              placeholder="Título ou cliente"
+              flex
+              value={term}
+              onChangeText={setTerm}
+            />
             <Button
               iconName="filter"
               variant="secondary"
